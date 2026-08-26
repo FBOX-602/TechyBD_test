@@ -632,13 +632,22 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
 .inner-page-hero .container { display: grid; gap: 0.9rem; position: relative; max-width: 900px; }
 .inner-page-hero h1 { font-size: clamp(1.9rem, 5.5vw, 3.1rem); }
 .inner-page-hero h1 span {
-  color: var(--primary) !important;
+  color: #FF6200 !important;
   background: transparent !important;
+  background-image: none !important;
   -webkit-background-clip: border-box !important;
   background-clip: border-box !important;
   border: none !important;
   box-shadow: none !important;
   text-decoration: none !important;
+  position: relative !important;
+}
+.inner-page-hero h1 span::before,
+.inner-page-hero h1 span::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+  border: none !important;
 }
 .inner-page-hero p { color: var(--muted-foreground); max-width: 44rem; }
 

@@ -481,14 +481,14 @@ function FeaturedWork({ full = false, navigate }) {
 
   const filteredProjects = useMemo(() => {
     if (activeCategory === "All") return projects;
-    return projects.filter(
-      (project) =>
-        project.category?.toLowerCase() === activeCategory.toLowerCase() ||
-        (activeCategory === "Service" && project.category === "Service Business")
-    );
+    const catClean = activeCategory.toLowerCase().replace(/s$/, "").trim();
+    return projects.filter((project) => {
+      const pCatClean = (project.category || "").toLowerCase().replace(/s$/, "").trim();
+      return pCatClean.includes(catClean) || catClean.includes(pCatClean);
+    });
   }, [projects, activeCategory]);
 
-  const displayedProjects = full ? filteredProjects : filteredProjects.slice(0, 3);
+  const displayedProjects = full ? filteredProjects : filteredProjects.slice(0, 6);
 
   return (
     <section className="section work-section-marketplace" id="selected-work">
@@ -520,7 +520,13 @@ function FeaturedWork({ full = false, navigate }) {
 
         {displayedProjects.length === 0 ? (
           <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#94a3b8" }}>
-            <p>No projects published yet. Add your new projects from the Admin panel.</p>
+            {projects.length === 0 ? (
+              <p>No projects published yet. Add your new projects from the Admin panel.</p>
+            ) : (
+              <p>
+                No projects under <strong>"{activeCategory}"</strong> category. Select <strong>"All"</strong> or <strong>"eCommerce"</strong> to view your added project.
+              </p>
+            )}
           </div>
         ) : (
           <div className="framer-marketplace-grid">

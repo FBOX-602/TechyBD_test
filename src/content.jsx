@@ -17,15 +17,15 @@ function mergeSettings(base, incoming) {
 }
 
 function normalizeFaqs(items) {
-  if (!Array.isArray(items)) return [];
-  return items.map((item, index) => {
+  const source = Array.isArray(items) ? items : faqItems;
+  return source.map((item, index) => {
     if (Array.isArray(item)) return { id: `faq-${index}`, question: item[0], answer: item[1], sortOrder: index, published: true };
     return { id: item.id || `faq-${index}`, question: item.question || "", answer: item.answer || "", sortOrder: item.sortOrder ?? index, published: item.published !== false };
   });
 }
 
 function normalizeCollection(items, fallback, prefix) {
-  const source = Array.isArray(items) && items.length ? items : fallback;
+  const source = Array.isArray(items) ? items : fallback;
   return source
     .filter((item) => item && item.published !== false)
     .map((item, index) => ({ ...item, id: item.id || item.slug || `${prefix}-${index}`, sortOrder: item.sortOrder ?? index }))
@@ -59,9 +59,8 @@ function normalizeContent(payload) {
 export function ContentProvider({ children }) {
   const [content, setContent] = useState(fallbackContent);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch("/api/content", { signal: controller.signal, headers: { Accept: "application/json" } })
+  const reloadContent = useCallback(() => {
+    fetch("/api/content", { headers: { Accept: "application/json" } })
       .then((response) => {
         if (!response.ok) throw new Error(`Content request failed (${response.status})`);
         return response.json();
@@ -70,8 +69,17 @@ export function ContentProvider({ children }) {
       .catch((error) => {
         if (error.name !== "AbortError") console.info("Using local content fallback until the CMS API is configured.");
       });
-    return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    reloadContent();
+    window.addEventListener("cms-content-update", reloadContent);
+    window.addEventListener("focus", reloadContent);
+    return () => {
+      window.removeEventListener("cms-content-update", reloadContent);
+      window.removeEventListener("focus", reloadContent);
+    };
+  }, [reloadContent]);
 
   const value = useMemo(() => content, [content]);
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;

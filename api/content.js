@@ -1,6 +1,7 @@
 import { getSettings, listItems, RESOURCES, updateSettings } from "../lib/cms/db.js";
 import { requireAdmin } from "../lib/cms/auth.js";
 import { isPlainObject, json, methodNotAllowed, noStore, readJson, sendError } from "../lib/cms/http.js";
+import { getMemoryItems } from "../lib/cms/memory-store.js";
 import * as defaults from "../src/data.js";
 
 function flatSettings(settings) {
@@ -75,15 +76,16 @@ export default async function handler(req, res) {
         ...flatSettings(settings),
       });
     } catch (dbErr) {
-      console.warn("[CMS API] Database query failed for GET content, returning fallback data:", dbErr.message);
+      console.warn("[CMS API] Database query failed for GET content, returning memory store data:", dbErr.message);
       const fallbackSet = defaults.siteSettings || {};
       return json(res, 200, {
         settings: fallbackSet,
-        projects: defaults.projects || [],
-        services: defaults.services || [],
-        offers: defaults.offers || [],
-        testimonials: defaults.testimonials || [],
-        faqs: defaults.faqItems || [],
+        projects: getMemoryItems("projects"),
+        services: getMemoryItems("services"),
+        offers: getMemoryItems("offers"),
+        testimonials: getMemoryItems("testimonials"),
+        customers: getMemoryItems("customers"),
+        faqs: getMemoryItems("faqs"),
         ...flatSettings(fallbackSet),
       });
     }

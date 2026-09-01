@@ -756,6 +756,7 @@ function AdminApp() {
       }
       setNotice(`${existing ? "Changes saved" : "New content added"} — the public site can now use this update.`);
       setEditor(null);
+      window.dispatchEvent(new CustomEvent("cms-content-update"));
       await loadView(resourceKey);
     } catch (requestError) {
       setError(requestError.message || "Could not save this content.");
@@ -775,6 +776,7 @@ function AdminApp() {
     try {
       await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" });
       setNotice("Content deleted.");
+      window.dispatchEvent(new CustomEvent("cms-content-update"));
       await loadView(activeView);
     } catch (requestError) {
       setError(requestError.message || "Could not delete this content.");

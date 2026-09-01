@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { assets, faqItems, offers, projects, services, siteSettings, testimonials } from "./data";
 
 const ContentContext = createContext(null);

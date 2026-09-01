@@ -268,11 +268,12 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   font-weight: 900;
 }
 .header-cta-top:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(255, 98, 0, 0.55);
+  transform: none;
+  box-shadow: 0 6px 20px rgba(255, 98, 0, 0.35);
+  background: #FF6200 !important;
 }
 .header-cta-top:hover .cta-circle-icon {
-  transform: scale(1.08);
+  transform: none;
 }
 
 
@@ -383,13 +384,13 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   font-weight: 900;
 }
 .header-cta-scrolled:hover {
-  transform: translateY(-2px);
-  background-color: #122548 !important;
-  border-color: rgba(255, 98, 0, 0.5) !important;
-  box-shadow: 0 6px 20px rgba(255, 98, 0, 0.3);
+  transform: none;
+  background-color: #0B1932 !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 .header-cta-scrolled:hover .cta-circle-icon {
-  transform: scale(1.1);
+  transform: none;
 }
 
 .menu-button {

@@ -20,4 +20,20 @@ CREATE TABLE IF NOT EXISTS site_settings (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Enable Row Level Security (RLS) to remove UNRESTRICTED warning in Supabase
+ALTER TABLE cms_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
+
+-- Allow public read-only access via Supabase API
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'cms_items' AND policyname = 'Public read access for cms_items') THEN
+    CREATE POLICY "Public read access for cms_items" ON cms_items FOR SELECT USING (true);
+  END IF;
+
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'site_settings' AND policyname = 'Public read access for site_settings') THEN
+    CREATE POLICY "Public read access for site_settings" ON site_settings FOR SELECT USING (true);
+  END IF;
+END $$;
+
 COMMIT;

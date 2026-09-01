@@ -11,7 +11,12 @@ export default async function handler(req, res) {
       return json(res, 401, { error: "Invalid password" });
     }
     const session = setSession(res);
-    return json(res, 200, { authenticated: true, expiresAt: session.exp });
+    return json(res, 200, {
+      authenticated: true,
+      expiresAt: session.exp,
+      token: "techy-bd-admin-local-token",
+      user: { name: "MD Omar Faruk", email: "admin@techybd.com" },
+    });
   } catch (error) {
     if (error instanceof HttpError) return sendError(res, error);
     return sendError(res, error);

@@ -39,6 +39,7 @@ import {
 } from "lucide-react";
 import { ContentProvider, useSiteContent } from "./content";
 import AdminApp from "./admin";
+import CustomerApp, { addCustomerOrder, getCustomerSession } from "./customer";
 import StudioFaq from "./components/StudioFaq";
 import "./styles.css";
 import "./studio-design.css";
@@ -128,6 +129,10 @@ function Header({ path, navigate }) {
   const { settings, assets } = useSiteContent();
   const { brand, nav } = settings;
 
+  const customerSession = getCustomerSession();
+  const ctaText = customerSession?.name ? "My Account" : "Login";
+  const ctaLink = "/account";
+
   useEffect(() => setOpen(false), [path]);
 
   useEffect(() => {
@@ -179,14 +184,14 @@ function Header({ path, navigate }) {
 
           {/* CTA Button */}
           <LocalLink
-            to="/contact"
+            to={ctaLink}
             navigate={navigate}
             className={`header-cta ${scrolled ? "header-cta-scrolled" : "header-cta-top"}`}
           >
             <span className="cta-circle-icon">
               <span className="cta-arrow">→</span>
             </span>
-            <span className="cta-text">Start a Project</span>
+            <span className="cta-text">{ctaText}</span>
           </LocalLink>
 
           {/* Mobile Menu Toggle Button */}
@@ -215,11 +220,11 @@ function Header({ path, navigate }) {
               <ChevronRight size={17} />
             </LocalLink>
           ))}
-          <LocalLink to="/contact" navigate={navigate} className="header-cta-top mobile-menu-cta-item">
+          <LocalLink to={ctaLink} navigate={navigate} className="header-cta-top mobile-menu-cta-item">
             <span className="cta-circle-icon">
               <span className="cta-arrow">→</span>
             </span>
-            <span className="cta-text">Start a Project</span>
+            <span className="cta-text">{ctaText}</span>
           </LocalLink>
         </div>
       )}
@@ -397,17 +402,36 @@ function TeamSection() {
 }
 
 // Section 6 & 7: Premium Editorial / Framer Marketplace Project Card
+function isVideoMedia(url) {
+  if (!url || typeof url !== "string") return false;
+  return url.startsWith("data:video/") || /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
 function ProjectCard({ project, navigate }) {
   const shortName = project.title.split("—")[0]?.trim() || project.title;
   const categoryTitle = project.category || "Web Project";
   const whatsappMsg = encodeURIComponent(`Hi Techy BD, I am interested in ordering a website like "${project.title}".`);
   const buyUrl = `https://wa.me/8801581503522?text=${whatsappMsg}`;
+  const isVideo = isVideoMedia(project.image);
+  const hasPrice = Boolean(project.price && String(project.price).trim());
 
   return (
     <article className="framer-portfolio-card">
       <div className="card-media-box">
-        <img src={project.image} alt={project.title} loading="lazy" className="card-thumb-img" />
+        {isVideo ? (
+          <video
+            src={project.image}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="card-thumb-img"
+          />
+        ) : (
+          <img src={project.image} alt={project.title} loading="lazy" className="card-thumb-img" />
+        )}
         <span className="card-status-badge">{project.status || "LIVE"}</span>
+        {hasPrice && <span className="card-price-badge">{project.price}</span>}
       </div>
 
       <div className="card-info-header">
@@ -546,6 +570,16 @@ function ServicesSection({ navigate }) {
                   <span className="service-number-badge">0{index + 1}</span>
                 </div>
 
+                {service.image && (
+                  <div className="service-media-wrap">
+                    {isVideoMedia(service.image) ? (
+                      <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
+                    ) : (
+                      <img src={service.image} alt={service.title} className="service-media-img" />
+                    )}
+                  </div>
+                )}
+
                 <div className="service-card-content">
                   <h3 className="service-serif-title">{service.title}</h3>
                   <p className="service-body-desc">{service.description}</p>
@@ -554,7 +588,9 @@ function ServicesSection({ navigate }) {
                 <div className="service-card-divider" />
 
                 <div className="service-card-bottom">
-                  <span className="service-price-bold">{service.price}</span>
+                  {service.price && String(service.price).trim() ? (
+                    <span className="service-price-bold">{service.price}</span>
+                  ) : <span />}
                   <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
                     Inquire →
                   </LocalLink>
@@ -573,6 +609,16 @@ function ServicesSection({ navigate }) {
                   <span className="service-number-badge">0{index + 4}</span>
                 </div>
 
+                {service.image && (
+                  <div className="service-media-wrap">
+                    {isVideoMedia(service.image) ? (
+                      <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
+                    ) : (
+                      <img src={service.image} alt={service.title} className="service-media-img" />
+                    )}
+                  </div>
+                )}
+
                 <div className="service-card-content">
                   <h3 className="service-serif-title">{service.title}</h3>
                   <p className="service-body-desc">{service.description}</p>
@@ -581,7 +627,9 @@ function ServicesSection({ navigate }) {
                 <div className="service-card-divider" />
 
                 <div className="service-card-bottom">
-                  <span className="service-price-bold">{service.price}</span>
+                  {service.price && String(service.price).trim() ? (
+                    <span className="service-price-bold">{service.price}</span>
+                  ) : <span />}
                   <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
                     Inquire →
                   </LocalLink>
@@ -1093,13 +1141,13 @@ function MobileActions({ navigate }) {
 }
 
 // Homepage layout (Section 25 Hierarchy)
-function HomePage({ navigate }) {
+function HomePage({ navigate, onBuyItem }) {
   return (
     <>
       <Hero navigate={navigate} />
       <TeamSection />
-      <FeaturedWork navigate={navigate} />
-      <ServicesSection navigate={navigate} />
+      <FeaturedWork navigate={navigate} onBuyItem={onBuyItem} />
+      <ServicesSection navigate={navigate} onBuyItem={onBuyItem} />
       <WhySection />
       <ProcessSection />
       <TestimonialSection />
@@ -1122,7 +1170,7 @@ function PageHero({ title, accent, copy }) {
   );
 }
 
-function WorkPage({ navigate }) {
+function WorkPage({ navigate, onBuyItem }) {
   const { settings } = useSiteContent();
   const work = settings.home.work;
   return (
@@ -1133,13 +1181,13 @@ function WorkPage({ navigate }) {
         accent="made to stand out."
         copy="Explore our selected work across eCommerce stores, business sites, landing pages, and digital tools."
       />
-      <FeaturedWork full navigate={navigate} />
+      <FeaturedWork full navigate={navigate} onBuyItem={onBuyItem} />
       <FinalCTA navigate={navigate} />
     </>
   );
 }
 
-function ServicesPage({ navigate }) {
+function ServicesPage({ navigate, onBuyItem }) {
   const { settings } = useSiteContent();
   const services = settings.home.services;
   return (
@@ -1150,7 +1198,7 @@ function ServicesPage({ navigate }) {
         accent={services.pageAccent}
         copy={services.pageCopy}
       />
-      <ServicesSection navigate={navigate} />
+      <ServicesSection navigate={navigate} onBuyItem={onBuyItem} />
       <FinalCTA navigate={navigate} />
     </>
   );
@@ -1702,6 +1750,7 @@ function App() {
   }, [route]);
 
   if (route === "/admin") return <AdminApp />;
+  if (route === "/account" || route === "/login") return <CustomerApp navigate={navigate} />;
 
   let page;
   if (route === "/") page = <HomePage navigate={navigate} />;

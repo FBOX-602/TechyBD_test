@@ -471,3 +471,33 @@ export const faqItems = [
   ["আমি নিজে এডিট করতে পারব?", "হ্যাঁ, প্রয়োজন অনুযায়ী সহজ admin workflow এবং handover guide দেওয়া হয়।"],
   ["প্রজেক্ট দেরি হলে কী হবে?", "শুরুর আগে একটি পরিষ্কার timeline দেওয়া হয়। কোনো পরিবর্তন হলে আগে থেকেই জানিয়ে দেওয়া হয়।"],
 ];
+
+export const customers = [
+  {
+    id: "cust-1",
+    name: "MD Omar Faruk",
+    emailOrPhone: "01581503522",
+    status: "Active",
+    totalOrders: "2 Orders",
+    totalSpent: "৳ 15,498",
+    notes: "Purchased PureBangla Organic eCommerce Site & Meta Pixel Setup.",
+  },
+  {
+    id: "cust-2",
+    name: "রুমানা আক্তার",
+    emailOrPhone: "01712345678",
+    status: "VIP",
+    totalOrders: "3 Orders",
+    totalSpent: "৳ 28,997",
+    notes: "Noor Skincare brand owner. Requested monthly maintenance support.",
+  },
+  {
+    id: "cust-3",
+    name: "সায়েদ হোসেন",
+    emailOrPhone: "sayed@maatirsaaj.com",
+    status: "Active",
+    totalOrders: "1 Order",
+    totalSpent: "৳ 12,499",
+    notes: "Maatir Saaj Product Store.",
+  },
+];

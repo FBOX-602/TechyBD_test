@@ -1,0 +1,623 @@
+/* Customer Portal Styles */
+.customer-portal-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0b1932;
+  background-image: radial-gradient(circle at 50% 20%, rgba(255, 98, 0, 0.15), transparent 70%);
+  padding: 2rem 1rem;
+}
+
+.customer-auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: #112240;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 2.2rem 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
+}
+
+.auth-brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.auth-brand-logo {
+  height: 28px;
+  width: auto;
+}
+
+.auth-brand-badge span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ff6200;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.customer-auth-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+  line-height: 1.25;
+}
+
+.customer-auth-desc {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  margin-bottom: 1.6rem;
+  line-height: 1.5;
+}
+
+.customer-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.customer-auth-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.customer-auth-form label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon svg {
+  position: absolute;
+  left: 12px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding: 0.75rem 0.75rem 0.75rem 2.4rem;
+  background: #0a1628;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-with-icon input:focus {
+  border-color: #ff6200;
+  box-shadow: 0 0 0 3px rgba(255, 98, 0, 0.2);
+}
+
+.customer-btn-primary {
+  width: 100%;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 8px;
+  background: #ff6200;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 0.4rem;
+}
+
+.customer-btn-primary:hover {
+  background: #e05600;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #1e293b;
+}
+
+.auth-divider span {
+  padding: 0 10px;
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.customer-btn-demo {
+  width: 100%;
+  padding: 0.75rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #38bdf8;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.customer-btn-demo:hover {
+  background: #334155;
+  color: #7dd3fc;
+}
+
+.auth-footer-toggle {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.88rem;
+  color: #94a3b8;
+}
+
+.auth-footer-toggle button {
+  background: transparent;
+  border: none;
+  color: #ff6200;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Customer Dashboard Layout */
+.customer-dashboard-container {
+  min-height: 100vh;
+  background: #070d19;
+  color: #f8fafc;
+  padding-bottom: 4rem;
+}
+
+.customer-header-bar {
+  background: #0f172a;
+  border-bottom: 1px solid #1e293b;
+  padding: 1.2rem 0;
+}
+
+.header-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.customer-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ff6200;
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(255, 98, 0, 0.4);
+}
+
+.customer-greeting {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.customer-subtext {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-site-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+}
+
+.back-site-btn:hover {
+  background: #334155;
+}
+
+.logout-btn {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+.customer-main-content {
+  margin-top: 2.5rem;
+}
+
+.dashboard-top-section {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.section-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ff6200;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+
+}
+
+.dashboard-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin: 0.2rem 0 0.4rem 0;
+}
+
+.dashboard-desc {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.browse-more-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  background: #ff6200;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(255, 98, 0, 0.35);
+  transition: background 0.2s;
+}
+
+.browse-more-btn:hover {
+  background: #e05600;
+}
+
+.orders-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.summary-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.summary-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-total {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+}
+
+.icon-completed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.icon-processing {
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+}
+
+.summary-number {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.orders-tab-row {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  padding: 0.7rem 1.2rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #f8fafc;
+}
+
+.tab-btn.active {
+  color: #ff6200;
+  border-bottom-color: #ff6200;
+}
+
+/* Orders Grid & Cards */
+.orders-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.order-item-card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.order-item-card:hover {
+  border-color: #334155;
+  transform: translateY(-2px);
+}
+
+.order-card-media {
+  position: relative;
+  width: 100%;
+  height: 170px;
+  background: #020617;
+  overflow: hidden;
+}
+
+.order-card-media img,
+.order-card-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.no-media-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #334155;
+}
+
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+}
+
+.status-completed {
+  background: rgba(34, 197, 94, 0.9);
+  color: #052e16;
+}
+
+.status-processing,
+.status-active {
+  background: rgba(250, 204, 21, 0.9);
+  color: #422006;
+}
+
+.order-card-body {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.order-meta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.order-id-code {
+  font-family: monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ff6200;
+}
+
+.order-purchase-date {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.order-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.35;
+}
+
+.order-category-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 0.8rem;
+}
+
+.order-notes {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin-bottom: 1.2rem;
+  flex: 1;
+}
+
+.order-card-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 0.8rem;
+  border-top: 1px solid #1e293b;
+}
+
+.price-tag-wrap small {
+  display: block;
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.order-price {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.order-actions-group {
+  display: flex;
+  gap: 6px;
+}
+
+.order-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btn-view-live {
+  background: #ff6200;
+  color: #ffffff;
+}
+
+.btn-view-live:hover {
+  background: #e05600;
+}
+
+.btn-support {
+  background: #1e293b;
+  color: #cbd5e1;
+  border: 1px solid #334155;
+}
+
+.btn-support:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.empty-orders-card {
+  background: #0f172a;
+  border: 1px dashed #334155;
+  border-radius: 16px;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  max-width: 480px;
+  margin: 2rem auto;
+}
+
+.empty-icon-wrap {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #1e293b;
+  color: #ff6200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.2rem auto;
+}
+
+.empty-orders-card h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+}
+
+.empty-orders-card p {
+  color: #94a3b8;
+  font-size: 0.92rem;
+  margin-bottom: 1.5rem;
+}

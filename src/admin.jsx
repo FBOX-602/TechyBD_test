@@ -27,6 +27,9 @@ const iconPaths = {
   info: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-10v5m0-8v.01",
   check: "m5 12 4.25 4.25L19 6.5",
   alert: "M12 3 2.8 19h18.4L12 3Zm0 5.5v4m0 3.5v.01",
+  upload: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",
+  video: "m22 8-6 4 6 4V8ZM2 6h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z",
+  customers: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
 };
 
 function Icon({ name, size = 18, stroke = 1.8, className = "" }) {
@@ -47,16 +50,17 @@ const resources = {
     endpoint: "projects",
     icon: "projects",
     description: "Your public portfolio and case-study links.",
-    columns: ["title", "category", "href"],
+    columns: ["title", "category", "price", "href"],
     fields: [
       { name: "title", label: "Project name", required: true, placeholder: "e.g. Noor Skincare" },
       { name: "category", label: "Category", type: "select", options: categories, required: true },
-      { name: "image", label: "Cover image URL", type: "url", required: true, placeholder: "https://..." },
+      { name: "price", label: "Price (Optional)", placeholder: "e.g. ৳ 5,000 (leave blank for no price)" },
+      { name: "image", label: "Cover image or short video", type: "file", placeholder: "Upload file or paste URL" },
       { name: "href", label: "Live website URL", type: "url", placeholder: "https://example.com" },
       { name: "description", label: "Short description", type: "textarea", required: true, rows: 4, placeholder: "What did Techy BD build for this client?" },
     ],
-    template: { title: "", category: "eCommerce", image: "", href: "", description: "" },
-    help: "Use a direct image URL (Cloudinary is ideal). Keep the description to one or two clear sentences.",
+    template: { title: "", category: "eCommerce", price: "", image: "", href: "", description: "" },
+    help: "Upload an image or short video, or paste a URL. Price is optional — leave empty to hide the price badge.",
   },
   services: {
     label: "Services",
@@ -68,13 +72,13 @@ const resources = {
     fields: [
       { name: "title", label: "Service name", required: true, placeholder: "e.g. Landing Page Design" },
       { name: "slug", label: "Page slug", required: true, placeholder: "landing-page-design", hint: "Lowercase words separated by hyphens." },
-      { name: "price", label: "Price", required: true, placeholder: "4999 BDT" },
-      { name: "image", label: "Service image URL", type: "url", required: true, placeholder: "https://..." },
+      { name: "price", label: "Price (Optional)", placeholder: "e.g. 4999 BDT (leave blank for no price)" },
+      { name: "image", label: "Service image or short video", type: "file", placeholder: "Upload file or paste URL" },
       { name: "icon", label: "Icon", type: "select", options: serviceIcons, required: true },
       { name: "description", label: "Service description", type: "textarea", required: true, rows: 4 },
     ],
     template: { title: "", slug: "", price: "", image: "", icon: "shopping-bag", description: "" },
-    help: "The slug creates the public service page URL: /services/your-slug.",
+    help: "Upload an image or short video, or paste a URL. Price is optional — leave empty to hide.",
   },
   offers: {
     label: "Offers & packages",
@@ -86,14 +90,14 @@ const resources = {
     fields: [
       { name: "title", label: "Offer name", required: true, placeholder: "e.g. Launch website package" },
       { name: "slug", label: "Page slug", required: true, placeholder: "launch-website-package" },
-      { name: "price", label: "Current price", required: true, placeholder: "৳ 9,999" },
-      { name: "was", label: "Previous price", placeholder: "৳ 12,999" },
-      { name: "image", label: "Offer image URL", type: "url", required: true, placeholder: "https://..." },
+      { name: "price", label: "Current price (Optional)", placeholder: "e.g. ৳ 9,999 (leave blank for no price)" },
+      { name: "was", label: "Previous price (Optional)", placeholder: "e.g. ৳ 12,999" },
+      { name: "image", label: "Offer image or short video", type: "file", placeholder: "Upload file or paste URL" },
       { name: "accent", label: "Colour treatment", type: "select", options: ["electric", "accent"], required: true },
       { name: "body", label: "Offer details", type: "textarea", required: true, rows: 4 },
     ],
     template: { title: "", slug: "", price: "", was: "", image: "", accent: "electric", body: "" },
-    help: "Set a real expiry or remove the limited-time wording from the public content when the offer ends.",
+    help: "Upload an image or short video, or paste a URL. Price is optional — leave empty to hide.",
   },
   testimonials: {
     label: "Testimonials",
@@ -111,6 +115,24 @@ const resources = {
     ],
     template: { name: "", role: "", brand: "", avatar: "", quote: "" },
     help: "Only publish quotes you have permission to use. A square, well-lit portrait works best.",
+  },
+  customers: {
+    label: "Customers",
+    singular: "customer",
+    endpoint: "customers",
+    icon: "customers",
+    description: "Registered customer accounts, contact details, and purchase history.",
+    columns: ["name", "emailOrPhone", "status", "totalOrders"],
+    fields: [
+      { name: "name", label: "Customer name", required: true, placeholder: "e.g. MD Omar Faruk" },
+      { name: "emailOrPhone", label: "Email / Phone number", required: true, placeholder: "e.g. 01581503522 or user@gmail.com" },
+      { name: "status", label: "Customer status", type: "select", options: ["Active", "VIP", "Lead", "Blocked"], required: true },
+      { name: "totalOrders", label: "Purchased items count", placeholder: "e.g. 2 Orders" },
+      { name: "totalSpent", label: "Total amount spent", placeholder: "e.g. ৳ 15,498" },
+      { name: "notes", label: "Customer details & purchase summary", type: "textarea", rows: 4, placeholder: "Purchased items: PureBangla Organic eCommerce, Meta Pixel setup..." },
+    ],
+    template: { name: "", emailOrPhone: "", status: "Active", totalOrders: "1 Order", totalSpent: "", notes: "" },
+    help: "View and manage customer profiles, contact numbers, order history, and account status.",
   },
   faqs: {
     label: "FAQs",
@@ -157,7 +179,7 @@ const resources = {
   },
 };
 
-const navResources = ["projects", "services", "offers", "testimonials", "faqs", "settings"];
+const navResources = ["projects", "services", "offers", "testimonials", "customers", "faqs", "settings"];
 
 function safeJson(value) {
   try {
@@ -401,7 +423,142 @@ function ResourceTable({ resourceKey, records, loading, search, onSearch, onEdit
   );
 }
 
+function isVideoMedia(url) {
+  if (!url || typeof url !== "string") return false;
+  return url.startsWith("data:video/") || /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
+}
+
+function MediaUploadField({ field, value, onChange }) {
+  const id = `admin-field-${field.name}`;
+  const fileInputRef = useRef(null);
+  const [useUrlMode, setUseUrlMode] = useState(false);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 25 * 1024 * 1024) {
+      alert("File size is too large (max 25MB). Please choose a smaller image or short video.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      onChange(field.name, event.target?.result || "");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    if (file.size > 25 * 1024 * 1024) {
+      alert("File size is too large (max 25MB). Please choose a smaller image or short video.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      onChange(field.name, event.target?.result || "");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const isVideo = isVideoMedia(value);
+
+  return (
+    <div className="admin-field admin-field-wide">
+      <div className="admin-media-field-header">
+        <label htmlFor={id}>
+          <span>{field.label}{field.required && <b aria-hidden="true">*</b>}</span>
+        </label>
+        <button
+          type="button"
+          className="admin-media-mode-toggle"
+          onClick={() => setUseUrlMode(!useUrlMode)}
+        >
+          {useUrlMode ? "📁 Switch to File Browse" : "🔗 Switch to Paste URL"}
+        </button>
+      </div>
+
+      {useUrlMode ? (
+        <input
+          id={id}
+          name={field.name}
+          type="text"
+          value={value ?? ""}
+          onChange={(e) => onChange(field.name, e.target.value)}
+          placeholder="https://... (image or video URL)"
+          required={field.required}
+        />
+      ) : (
+        <div className="admin-file-upload-zone">
+          <input
+            id={id}
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+          {value ? (
+            <div className="admin-media-preview-container">
+              {isVideo ? (
+                <video
+                  src={value}
+                  controls
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="admin-media-preview-element"
+                />
+              ) : (
+                <img
+                  src={value}
+                  alt="Media preview"
+                  className="admin-media-preview-element"
+                />
+              )}
+              <div className="admin-media-preview-actions">
+                <button
+                  type="button"
+                  className="admin-button admin-button-quiet"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Icon name="edit" size={15} /> Browse / Change File
+                </button>
+                <button
+                  type="button"
+                  className="admin-button admin-button-quiet admin-delete"
+                  onClick={() => onChange(field.name, "")}
+                >
+                  <Icon name="trash" size={15} /> Remove
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="admin-dropzone-box"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+            >
+              <span className="admin-dropzone-icon">
+                <Icon name="upload" size={28} />
+              </span>
+              <strong>Click to Browse File or Drag & Drop</strong>
+              <small>Upload Image (PNG, JPG, WEBP, GIF, SVG) or Short Video (MP4, WEBM)</small>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FormField({ field, value, onChange }) {
+  if (field.type === "file") {
+    return <MediaUploadField field={field} value={value} onChange={onChange} />;
+  }
   const id = `admin-field-${field.name}`;
   const shared = { id, name: field.name, value: value ?? "", onChange: (event) => onChange(field.name, event.target.value), required: field.required, placeholder: field.placeholder, "aria-describedby": field.hint ? `${id}-hint` : undefined };
   return (

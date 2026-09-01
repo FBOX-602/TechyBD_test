@@ -353,3 +353,92 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-root *, .admin-login-shell * { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Media Upload Field in Admin */
+.admin-media-field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.admin-media-mode-toggle {
+  background: transparent;
+  border: 1px solid #e2e7ee;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.admin-media-mode-toggle:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.admin-file-upload-zone {
+  width: 100%;
+}
+
+.admin-dropzone-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border: 2px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.admin-dropzone-box:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.admin-dropzone-icon {
+  margin-bottom: 8px;
+  color: #64748b;
+}
+
+.admin-dropzone-box strong {
+  font-size: 13px;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.admin-dropzone-box small {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.admin-media-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.admin-media-preview-element {
+  max-height: 220px;
+  width: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #0f172a;
+}
+
+.admin-media-preview-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+

@@ -694,10 +694,24 @@ function AdminApp() {
 
         const mergedMap = new Map();
         [...listFromApi, ...localList].forEach((item) => {
-          const id = getId(item);
-          if (id) mergedMap.set(String(id), item);
+          if (!item) return;
+          const titleKey = (item.title || item.name || "").toLowerCase().trim();
+          const primaryKey = String(item.id || item.slug || (titleKey ? `title-${titleKey}` : ""));
+          if (!primaryKey) return;
+
+          if (titleKey && mergedMap.has(`title-${titleKey}`)) {
+            const existing = mergedMap.get(`title-${titleKey}`);
+            if (item.id && !existing.id) {
+              mergedMap.set(primaryKey, item);
+              mergedMap.set(`title-${titleKey}`, item);
+            }
+          } else {
+            mergedMap.set(primaryKey, item);
+            if (titleKey) mergedMap.set(`title-${titleKey}`, item);
+          }
         });
-        setRecords(Array.from(mergedMap.values()));
+        const uniqueRecords = Array.from(new Set(mergedMap.values()));
+        setRecords(uniqueRecords);
       }
     } catch (requestError) {
       setError(requestError.message || "Could not load this content.");
@@ -762,10 +776,17 @@ function AdminApp() {
       if (!store[resourceKey]) store[resourceKey] = [];
 
       const itemData = payload.item ? payload.item : payload;
-      const itemId = (existing ? getId(existing) : null) || itemData.id || itemData.slug || itemData.title || `item-${Date.now()}`;
+      const itemId = (existing ? getId(existing) : null) || itemData.id || itemData.slug || `item-${Date.now()}`;
       const savedObj = { id: itemId, ...itemData };
 
-      const idx = store[resourceKey].findIndex((x) => String(getId(x)) === String(itemId));
+      const itemTitle = (itemData.title || itemData.name || "").toLowerCase().trim();
+      const idx = store[resourceKey].findIndex((x) => {
+        const xId = String(getId(x) || "");
+        const xTitle = (x.title || x.name || "").toLowerCase().trim();
+        if (itemId && xId === String(itemId)) return true;
+        if (itemTitle && xTitle === itemTitle) return true;
+        return false;
+      });
       if (idx >= 0) {
         store[resourceKey][idx] = { ...store[resourceKey][idx], ...savedObj };
       } else {
@@ -775,14 +796,22 @@ function AdminApp() {
     } catch {}
   };
 
-  const syncLocalStoreDelete = (resourceKey, itemId) => {
+  const syncLocalStoreDelete = (resourceKey, item) => {
     try {
       const storageKey = "techy_bd_cms_local_store_v1";
       const raw = localStorage.getItem(storageKey);
       if (!raw) return;
       const store = JSON.parse(raw);
       if (store[resourceKey]) {
-        store[resourceKey] = store[resourceKey].filter((x) => String(getId(x)) !== String(itemId));
+        const itemId = String(getId(item) || "");
+        const itemTitle = (item?.title || item?.name || "").toLowerCase().trim();
+        store[resourceKey] = store[resourceKey].filter((x) => {
+          const xId = String(getId(x) || "");
+          const xTitle = (x?.title || x?.name || "").toLowerCase().trim();
+          if (itemId && xId === itemId) return false;
+          if (itemTitle && xTitle === itemTitle) return false;
+          return true;
+        });
         localStorage.setItem(storageKey, JSON.stringify(store));
       }
     } catch {}
@@ -822,12 +851,13 @@ function AdminApp() {
     const name = item.title || item.name || item.question || config.singular;
     if (!window.confirm(`Delete “${name}”? This cannot be undone.`)) return;
     const id = getId(item);
-    if (!id) { setError("This item has no ID, so it cannot be deleted. Refresh and try again."); return; }
     setActionBusy(true);
     setError("");
     try {
-      syncLocalStoreDelete(activeView, id);
-      await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+      syncLocalStoreDelete(activeView, item);
+      if (id) {
+        await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+      }
       setNotice("Content deleted.");
       window.dispatchEvent(new CustomEvent("cms-content-update"));
       await loadView(activeView);

@@ -53,6 +53,29 @@ export const fallbackContent = Object.freeze({
   faqs: normalizeFaqs(faqItems),
 });
 
+function deduplicateItems(items) {
+  if (!Array.isArray(items)) return [];
+  const map = new Map();
+  items.forEach((item) => {
+    if (!item) return;
+    const titleKey = (item.title || item.name || "").toLowerCase().trim();
+    const primaryKey = item.id || item.slug || (titleKey ? `title-${titleKey}` : null);
+    if (primaryKey) {
+      if (titleKey && map.has(`title-${titleKey}`)) {
+        const existing = map.get(`title-${titleKey}`);
+        if (item.id && !existing.id) {
+          map.set(primaryKey, { ...item, id: item.id });
+          map.set(`title-${titleKey}`, { ...item, id: item.id });
+        }
+      } else {
+        map.set(primaryKey, { ...item, id: item.id || primaryKey });
+        if (titleKey) map.set(`title-${titleKey}`, { ...item, id: item.id || primaryKey });
+      }
+    }
+  });
+  return Array.from(new Set(map.values()));
+}
+
 function normalizeContent(payload) {
   const localStore = getLocalCmsData() || {};
 
@@ -60,40 +83,19 @@ function normalizeContent(payload) {
     ...(Array.isArray(payload?.projects) ? payload.projects : []),
     ...(Array.isArray(localStore?.projects) ? localStore.projects : []),
   ];
-  const uniqueProjectsMap = new Map();
-  mergedProjects.forEach((p) => {
-    if (p) {
-      const key = p.id || p.slug || p.title || p.name;
-      if (key) uniqueProjectsMap.set(key, p);
-    }
-  });
-  const finalProjects = Array.from(uniqueProjectsMap.values());
+  const finalProjects = deduplicateItems(mergedProjects);
 
   const mergedServices = [
     ...(Array.isArray(payload?.services) ? payload.services : []),
     ...(Array.isArray(localStore?.services) ? localStore.services : []),
   ];
-  const uniqueServicesMap = new Map();
-  mergedServices.forEach((s) => {
-    if (s) {
-      const key = s.id || s.slug || s.title || s.name;
-      if (key) uniqueServicesMap.set(key, s);
-    }
-  });
-  const finalServices = Array.from(uniqueServicesMap.values());
+  const finalServices = deduplicateItems(mergedServices);
 
   const mergedOffers = [
     ...(Array.isArray(payload?.offers) ? payload.offers : []),
     ...(Array.isArray(localStore?.offers) ? localStore.offers : []),
   ];
-  const uniqueOffersMap = new Map();
-  mergedOffers.forEach((o) => {
-    if (o) {
-      const key = o.id || o.slug || o.title || o.name;
-      if (key) uniqueOffersMap.set(key, o);
-    }
-  });
-  const finalOffers = Array.from(uniqueOffersMap.values());
+  const finalOffers = deduplicateItems(mergedOffers);
 
   const settings = mergeSettings(siteSettings, payload?.settings);
 

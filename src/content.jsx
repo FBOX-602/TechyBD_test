@@ -32,6 +32,17 @@ function normalizeCollection(items, fallback, prefix) {
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
+const LOCAL_STORAGE_KEY = "techy_bd_cms_local_store_v1";
+
+export function getLocalCmsData() {
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export const fallbackContent = Object.freeze({
   settings: siteSettings,
   assets,
@@ -43,16 +54,57 @@ export const fallbackContent = Object.freeze({
 });
 
 function normalizeContent(payload) {
-  if (!isRecord(payload)) return fallbackContent;
-  const settings = mergeSettings(siteSettings, payload.settings);
+  const localStore = getLocalCmsData() || {};
+
+  const mergedProjects = [
+    ...(Array.isArray(payload?.projects) ? payload.projects : []),
+    ...(Array.isArray(localStore?.projects) ? localStore.projects : []),
+  ];
+  const uniqueProjectsMap = new Map();
+  mergedProjects.forEach((p) => {
+    if (p) {
+      const key = p.id || p.slug || p.title || p.name;
+      if (key) uniqueProjectsMap.set(key, p);
+    }
+  });
+  const finalProjects = Array.from(uniqueProjectsMap.values());
+
+  const mergedServices = [
+    ...(Array.isArray(payload?.services) ? payload.services : []),
+    ...(Array.isArray(localStore?.services) ? localStore.services : []),
+  ];
+  const uniqueServicesMap = new Map();
+  mergedServices.forEach((s) => {
+    if (s) {
+      const key = s.id || s.slug || s.title || s.name;
+      if (key) uniqueServicesMap.set(key, s);
+    }
+  });
+  const finalServices = Array.from(uniqueServicesMap.values());
+
+  const mergedOffers = [
+    ...(Array.isArray(payload?.offers) ? payload.offers : []),
+    ...(Array.isArray(localStore?.offers) ? localStore.offers : []),
+  ];
+  const uniqueOffersMap = new Map();
+  mergedOffers.forEach((o) => {
+    if (o) {
+      const key = o.id || o.slug || o.title || o.name;
+      if (key) uniqueOffersMap.set(key, o);
+    }
+  });
+  const finalOffers = Array.from(uniqueOffersMap.values());
+
+  const settings = mergeSettings(siteSettings, payload?.settings);
+
   return {
     settings,
     assets: { ...assets, ...(settings.assets || {}) },
-    projects: normalizeCollection(payload.projects, projects, "project"),
-    services: normalizeCollection(payload.services, services, "service"),
-    offers: normalizeCollection(payload.offers, offers, "offer"),
-    testimonials: normalizeCollection(payload.testimonials, testimonials, "testimonial"),
-    faqs: normalizeFaqs(Array.isArray(payload.faqs) && payload.faqs.length ? payload.faqs : faqItems),
+    projects: normalizeCollection(finalProjects, projects, "project"),
+    services: normalizeCollection(finalServices, services, "service"),
+    offers: normalizeCollection(finalOffers, offers, "offer"),
+    testimonials: normalizeCollection(payload?.testimonials, testimonials, "testimonial"),
+    faqs: normalizeFaqs(payload?.faqs),
   };
 }
 

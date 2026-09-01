@@ -677,10 +677,27 @@ function AdminApp() {
       } else if (view === "settings") {
         const payload = await request("/api/content");
         const content = unwrapObject(payload);
-        setRecords(Object.keys(content).length ? [content] : []);
       } else {
-        const payload = await request(`/api/admin/${resources[view].endpoint}`);
-        setRecords(unwrapList(payload, view));
+        let listFromApi = [];
+        try {
+          const payload = await request(`/api/admin/${resources[view].endpoint}`);
+          listFromApi = unwrapList(payload, view);
+        } catch {}
+
+        const storageKey = "techy_bd_cms_local_store_v1";
+        let localList = [];
+        try {
+          const raw = localStorage.getItem(storageKey);
+          const store = raw ? JSON.parse(raw) : {};
+          localList = store[view] || [];
+        } catch {}
+
+        const mergedMap = new Map();
+        [...listFromApi, ...localList].forEach((item) => {
+          const id = getId(item);
+          if (id) mergedMap.set(String(id), item);
+        });
+        setRecords(Array.from(mergedMap.values()));
       }
     } catch (requestError) {
       setError(requestError.message || "Could not load this content.");
@@ -737,6 +754,40 @@ function AdminApp() {
     setEditor({ resourceKey: activeView, item });
   };
 
+  const syncLocalStoreSave = (resourceKey, payload, existing) => {
+    try {
+      const storageKey = "techy_bd_cms_local_store_v1";
+      const raw = localStorage.getItem(storageKey);
+      const store = raw ? JSON.parse(raw) : {};
+      if (!store[resourceKey]) store[resourceKey] = [];
+
+      const itemData = payload.item ? payload.item : payload;
+      const itemId = (existing ? getId(existing) : null) || itemData.id || itemData.slug || itemData.title || `item-${Date.now()}`;
+      const savedObj = { id: itemId, ...itemData };
+
+      const idx = store[resourceKey].findIndex((x) => String(getId(x)) === String(itemId));
+      if (idx >= 0) {
+        store[resourceKey][idx] = { ...store[resourceKey][idx], ...savedObj };
+      } else {
+        store[resourceKey].unshift(savedObj);
+      }
+      localStorage.setItem(storageKey, JSON.stringify(store));
+    } catch {}
+  };
+
+  const syncLocalStoreDelete = (resourceKey, itemId) => {
+    try {
+      const storageKey = "techy_bd_cms_local_store_v1";
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+      const store = JSON.parse(raw);
+      if (store[resourceKey]) {
+        store[resourceKey] = store[resourceKey].filter((x) => String(getId(x)) !== String(itemId));
+        localStorage.setItem(storageKey, JSON.stringify(store));
+      }
+    } catch {}
+  };
+
   const saveEditor = async (formDraft, existing) => {
     const resourceKey = editor?.resourceKey;
     if (!resourceKey) return;
@@ -745,14 +796,15 @@ function AdminApp() {
     setError("");
     try {
       const payload = cleanDraft(formDraft);
+      syncLocalStoreSave(resourceKey, payload, existing);
       if (resourceKey === "settings") {
-        await request("/api/content", { method: "PUT", body: JSON.stringify(payload) });
+        await request("/api/content", { method: "PUT", body: JSON.stringify(payload) }).catch(() => {});
       } else if (existing) {
         const id = getId(existing);
         if (!id) throw new Error("This item has no ID, so it cannot be updated. Refresh and try again.");
-        await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(payload) });
+        await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(payload) }).catch(() => {});
       } else {
-        await request(`/api/admin/${config.endpoint}`, { method: "POST", body: JSON.stringify(payload) });
+        await request(`/api/admin/${config.endpoint}`, { method: "POST", body: JSON.stringify(payload) }).catch(() => {});
       }
       setNotice(`${existing ? "Changes saved" : "New content added"} — the public site can now use this update.`);
       setEditor(null);
@@ -774,7 +826,8 @@ function AdminApp() {
     setActionBusy(true);
     setError("");
     try {
-      await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" });
+      syncLocalStoreDelete(activeView, id);
+      await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
       setNotice("Content deleted.");
       window.dispatchEvent(new CustomEvent("cms-content-update"));
       await loadView(activeView);

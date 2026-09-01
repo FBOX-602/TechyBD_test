@@ -518,11 +518,17 @@ function FeaturedWork({ full = false, navigate }) {
           ))}
         </div>
 
-        <div className="framer-marketplace-grid">
-          {displayedProjects.map((project) => (
-            <ProjectCard key={project.slug || project.id} project={project} navigate={navigate} />
-          ))}
-        </div>
+        {displayedProjects.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#94a3b8" }}>
+            <p>No projects published yet. Add your new projects from the Admin panel.</p>
+          </div>
+        ) : (
+          <div className="framer-marketplace-grid">
+            {displayedProjects.map((project) => (
+              <ProjectCard key={project.slug || project.id} project={project} navigate={navigate} />
+            ))}
+          </div>
+        )}
 
         {!full && (
           <div className="see-all-cta-container">
@@ -558,86 +564,91 @@ function ServicesSection({ navigate }) {
           </p>
         </div>
 
-        {/* 5-Card Editorial Grid (3 cards top row, 2 cards bottom row centered) */}
-        <div className="services-editorial-grid">
-          <div className="services-grid-top-row">
-            {services.slice(0, 3).map((service, index) => (
-              <article className="service-card-editorial" key={service.slug || service.id}>
-                <div className="service-card-top">
-                  <span className="service-icon-badge">
-                    <IconForService name={service.icon} size={20} />
-                  </span>
-                  <span className="service-number-badge">0{index + 1}</span>
-                </div>
-
-                {service.image && (
-                  <div className="service-media-wrap">
-                    {isVideoMedia(service.image) ? (
-                      <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
-                    ) : (
-                      <img src={service.image} alt={service.title} className="service-media-img" />
-                    )}
-                  </div>
-                )}
-
-                <div className="service-card-content">
-                  <h3 className="service-serif-title">{service.title}</h3>
-                  <p className="service-body-desc">{service.description}</p>
-                </div>
-
-                <div className="service-card-divider" />
-
-                <div className="service-card-bottom">
-                  {service.price && String(service.price).trim() ? (
-                    <span className="service-price-bold">{service.price}</span>
-                  ) : <span />}
-                  <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
-                    Inquire →
-                  </LocalLink>
-                </div>
-              </article>
-            ))}
+        {services.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#94a3b8" }}>
+            <p>No services published yet. Add your new services from the Admin panel.</p>
           </div>
-
-          <div className="services-grid-bottom-row">
-            {services.slice(3, 5).map((service, index) => (
-              <article className="service-card-editorial" key={service.slug || service.id}>
-                <div className="service-card-top">
-                  <span className="service-icon-badge">
-                    <IconForService name={service.icon} size={20} />
-                  </span>
-                  <span className="service-number-badge">0{index + 4}</span>
-                </div>
-
-                {service.image && (
-                  <div className="service-media-wrap">
-                    {isVideoMedia(service.image) ? (
-                      <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
-                    ) : (
-                      <img src={service.image} alt={service.title} className="service-media-img" />
-                    )}
+        ) : (
+          <div className="services-editorial-grid">
+            <div className="services-grid-top-row">
+              {services.slice(0, 3).map((service, index) => (
+                <article className="service-card-editorial" key={service.slug || service.id}>
+                  <div className="service-card-top">
+                    <span className="service-icon-badge">
+                      <IconForService name={service.icon} size={20} />
+                    </span>
+                    <span className="service-number-badge">0{index + 1}</span>
                   </div>
-                )}
 
-                <div className="service-card-content">
-                  <h3 className="service-serif-title">{service.title}</h3>
-                  <p className="service-body-desc">{service.description}</p>
-                </div>
+                  {service.image && (
+                    <div className="service-media-wrap">
+                      {isVideoMedia(service.image) ? (
+                        <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
+                      ) : (
+                        <img src={service.image} alt={service.title} className="service-media-img" />
+                      )}
+                    </div>
+                  )}
 
-                <div className="service-card-divider" />
+                  <div className="service-card-content">
+                    <h3 className="service-serif-title">{service.title}</h3>
+                    <p className="service-body-desc">{service.description}</p>
+                  </div>
 
-                <div className="service-card-bottom">
-                  {service.price && String(service.price).trim() ? (
-                    <span className="service-price-bold">{service.price}</span>
-                  ) : <span />}
-                  <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
-                    Inquire →
-                  </LocalLink>
-                </div>
-              </article>
-            ))}
+                  <div className="service-card-divider" />
+
+                  <div className="service-card-bottom">
+                    {service.price && String(service.price).trim() ? (
+                      <span className="service-price-bold">{service.price}</span>
+                    ) : <span />}
+                    <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
+                      Inquire →
+                    </LocalLink>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="services-grid-bottom-row">
+              {services.slice(3, 5).map((service, index) => (
+                <article className="service-card-editorial" key={service.slug || service.id}>
+                  <div className="service-card-top">
+                    <span className="service-icon-badge">
+                      <IconForService name={service.icon} size={20} />
+                    </span>
+                    <span className="service-number-badge">0{index + 4}</span>
+                  </div>
+
+                  {service.image && (
+                    <div className="service-media-wrap">
+                      {isVideoMedia(service.image) ? (
+                        <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
+                      ) : (
+                        <img src={service.image} alt={service.title} className="service-media-img" />
+                      )}
+                    </div>
+                  )}
+
+                  <div className="service-card-content">
+                    <h3 className="service-serif-title">{service.title}</h3>
+                    <p className="service-body-desc">{service.description}</p>
+                  </div>
+
+                  <div className="service-card-divider" />
+
+                  <div className="service-card-bottom">
+                    {service.price && String(service.price).trim() ? (
+                      <span className="service-price-bold">{service.price}</span>
+                    ) : <span />}
+                    <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
+                      Inquire →
+                    </LocalLink>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

@@ -58,22 +58,18 @@ function deduplicateItems(items) {
   const map = new Map();
   items.forEach((item) => {
     if (!item) return;
-    const titleKey = (item.title || item.name || "").toLowerCase().trim();
-    const primaryKey = item.id || item.slug || (titleKey ? `title-${titleKey}` : null);
-    if (primaryKey) {
-      if (titleKey && map.has(`title-${titleKey}`)) {
-        const existing = map.get(`title-${titleKey}`);
-        if (item.id && !existing.id) {
-          map.set(primaryKey, { ...item, id: item.id });
-          map.set(`title-${titleKey}`, { ...item, id: item.id });
-        }
-      } else {
-        map.set(primaryKey, { ...item, id: item.id || primaryKey });
-        if (titleKey) map.set(`title-${titleKey}`, { ...item, id: item.id || primaryKey });
-      }
+    const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
+    const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
+    if (!key) return;
+
+    const existing = map.get(key);
+    if (!existing) {
+      map.set(key, { ...item, id: item.id || key });
+    } else if (item.id && !existing.id) {
+      map.set(key, { ...item, id: item.id });
     }
   });
-  return Array.from(new Set(map.values()));
+  return Array.from(map.values());
 }
 
 function normalizeContent(payload) {

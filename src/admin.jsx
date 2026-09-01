@@ -695,23 +695,18 @@ function AdminApp() {
         const mergedMap = new Map();
         [...listFromApi, ...localList].forEach((item) => {
           if (!item) return;
-          const titleKey = (item.title || item.name || "").toLowerCase().trim();
-          const primaryKey = String(item.id || item.slug || (titleKey ? `title-${titleKey}` : ""));
-          if (!primaryKey) return;
+          const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
+          const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
+          if (!key) return;
 
-          if (titleKey && mergedMap.has(`title-${titleKey}`)) {
-            const existing = mergedMap.get(`title-${titleKey}`);
-            if (item.id && !existing.id) {
-              mergedMap.set(primaryKey, item);
-              mergedMap.set(`title-${titleKey}`, item);
-            }
-          } else {
-            mergedMap.set(primaryKey, item);
-            if (titleKey) mergedMap.set(`title-${titleKey}`, item);
+          const existing = mergedMap.get(key);
+          if (!existing) {
+            mergedMap.set(key, { ...item, id: item.id || key });
+          } else if (item.id && !existing.id) {
+            mergedMap.set(key, { ...item, id: item.id });
           }
         });
-        const uniqueRecords = Array.from(new Set(mergedMap.values()));
-        setRecords(uniqueRecords);
+        setRecords(Array.from(mergedMap.values()));
       }
     } catch (requestError) {
       setError(requestError.message || "Could not load this content.");

@@ -629,9 +629,9 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
 .cta-band-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; position: relative; }
 
 /* ---------- inner pages ---------- */
-.inner-page-hero { position: relative; padding: 3rem 0 2.25rem; overflow: hidden; border-bottom: 1px solid var(--hairline); }
-.inner-page-hero .container { display: grid; gap: 0.9rem; position: relative; max-width: 900px; }
-.inner-page-hero h1 { font-size: clamp(1.9rem, 5.5vw, 3.1rem); }
+.inner-page-hero { position: relative; padding: 3.5rem 0 2.5rem; overflow: hidden; border-bottom: 1px solid var(--hairline); text-align: center; }
+.inner-page-hero .container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; position: relative; max-width: 900px; margin: 0 auto; text-align: center; }
+.inner-page-hero h1 { font-size: clamp(2rem, 5.5vw, 3.4rem); text-align: center; font-weight: 800; letter-spacing: -0.03em; }
 .inner-page-hero h1 span {
   color: #FF6200 !important;
   background: transparent !important;
@@ -650,7 +650,7 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   background: none !important;
   border: none !important;
 }
-.inner-page-hero p { color: var(--muted-foreground); max-width: 44rem; }
+.inner-page-hero p { color: var(--muted-foreground); max-width: 46rem; text-align: center; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; }
 
 .about-grid, .detail-grid, .contact-grid { display: grid; gap: 1.75rem; }
 .about-grid > div:first-child { display: grid; gap: 0.9rem; align-content: start; }

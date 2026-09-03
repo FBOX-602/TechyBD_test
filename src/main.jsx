@@ -456,7 +456,7 @@ function ProjectCard({ project, navigate }) {
           rel="noreferrer"
           className="framer-card-btn btn-buy"
         >
-          Buy
+          Contact
         </a>
       </div>
     </article>

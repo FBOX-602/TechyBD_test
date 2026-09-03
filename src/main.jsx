@@ -1363,31 +1363,11 @@ function HomePage({ navigate, onBuyItem }) {
   );
 }
 
-function PageHero({ title, accent, copy }) {
-  return (
-    <section className="inner-page-hero">
-      <div className="grid-backdrop" />
-      <div className="container">
-        <h1>
-          {title} {accent && <span>{accent}</span>}
-        </h1>
-        {copy && <p>{copy}</p>}
-      </div>
-    </section>
-  );
-}
-
 function WorkPage({ navigate, onBuyItem }) {
   const { settings } = useSiteContent();
   const work = settings.home.work;
   return (
     <>
-      <PageHero
-        eyebrow="Portfolio"
-        title="Digital experiences"
-        accent="made to stand out."
-        copy="Explore our selected work across eCommerce stores, business sites, landing pages, and digital tools."
-      />
       <FeaturedWork full navigate={navigate} onBuyItem={onBuyItem} />
       <FinalCTA navigate={navigate} />
     </>
@@ -1399,12 +1379,6 @@ function ServicesPage({ navigate, onBuyItem }) {
   const services = settings.home.services;
   return (
     <>
-      <PageHero
-        eyebrow={services.pageEyebrow}
-        title={services.pageTitle}
-        accent={services.pageAccent}
-        copy={services.pageCopy}
-      />
       <ServicesSection navigate={navigate} onBuyItem={onBuyItem} />
       <FinalCTA navigate={navigate} />
     </>

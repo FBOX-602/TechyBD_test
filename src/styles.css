@@ -764,20 +764,21 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   position: sticky;
   top: 0;
   z-index: 100;
-  background: #06142f !important;
+  background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   filter: none !important;
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: none !important;
+  box-shadow: none !important;
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .site-header.header-scrolled {
-  background: #06142f !important;
+  background: transparent !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   filter: none !important;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  border-bottom-color: rgba(255, 98, 0, 0.15);
+  border-bottom: none !important;
+  box-shadow: none !important;
 }
 .button-nav {
   padding: 0.6rem 1.15rem;

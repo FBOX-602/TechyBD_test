@@ -3473,6 +3473,31 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   border: 2.5px solid var(--primary);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
+.testimonial-gender-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.testimonial-card-editorial:hover .testimonial-gender-avatar {
+  transform: scale(1.08);
+}
+.testimonial-gender-avatar.gender-female {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.25), rgba(168, 85, 247, 0.35));
+  border-color: rgba(236, 72, 153, 0.6);
+  color: #f472b6;
+}
+.testimonial-gender-avatar.gender-male {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(99, 102, 241, 0.35));
+  border-color: rgba(59, 130, 246, 0.6);
+  color: #60a5fa;
+}
 .testimonial-author-info {
   display: flex;
   flex-direction: column;

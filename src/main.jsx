@@ -845,6 +845,32 @@ function ProcessSection() {
   );
 }
 
+function GenderAvatar({ item }) {
+  if (item?.avatar && String(item.avatar).trim()) {
+    return <img src={item.avatar} alt={item.name} loading="lazy" className="testimonial-avatar-img" />;
+  }
+
+  const isFemale = item?.gender === "female" || ["nowsin", "zara", "ফারিয়া", "সারমিন", "সাবরিনা", "রুমানা", "ফাতেমা", "জারা"].some((g) => (item?.name || "").toLowerCase().includes(g));
+
+  return (
+    <div className={`testimonial-gender-avatar ${isFemale ? "gender-female" : "gender-male"}`} title={isFemale ? "Female Client" : "Male Client"}>
+      {isFemale ? (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="9" r="6" />
+          <path d="M12 15v7" />
+          <path d="M9 19h6" />
+        </svg>
+      ) : (
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="10" cy="14" r="6" />
+          <path d="M14.2 9.8L20 4" />
+          <path d="M15 4h5v5" />
+        </svg>
+      )}
+    </div>
+  );
+}
+
 // Section 12: Testimonial Section (Editorial Creative Paper Cards Showcase)
 function TestimonialSection() {
   const { testimonials } = useSiteContent();
@@ -852,6 +878,7 @@ function TestimonialSection() {
   const defaultTestimonials = [
     {
       name: "Nowsin Zara",
+      gender: "female",
       role: "School Management System",
       avatar: "",
       quote: "আমাদের স্কুলের সমস্যাগুলো সমাধান করার জন্য আপনাকে আন্তরিক ধন্যবাদ। আপনার মূল্যবান সময় দিয়ে ধীরে ধীরে আমাদের সিস্টেমকে আরও উন্নত করা, সমস্যাগুলো চিহ্নিত করে সমাধান করা এবং একটি কার্যকর ও সুন্দর সিস্টেম তৈরি করে দেওয়ার জন্য আমরা সত্যিই কৃতজ্ঞ। আপনার সহযোগিতা ও আন্তরিক প্রচেষ্টার জন্য অসংখ্য ধন্যবাদ। ❤️",
@@ -859,6 +886,7 @@ function TestimonialSection() {
     },
     {
       name: "Ibrahim Ahmed",
+      gender: "male",
       role: "Business Client • Landing Page",
       avatar: "",
       quote: "আমাদের ব্যবসার জন্য অসাধারণ একটি Landing Page তৈরি করে দিয়েছে। Design, responsiveness এবং overall presentation—সবকিছুই অনেক professional। কাজের মান সত্যিই প্রশংসনীয়। ❤️",
@@ -866,6 +894,7 @@ function TestimonialSection() {
     },
     {
       name: "Ahad Molla",
+      gender: "male",
       role: "Website Client • Business Client",
       avatar: "",
       quote: "একটি সুন্দর ও professional Website দরকার ছিল, আর ঠিক আমাদের চাহিদা অনুযায়ী তৈরি করে দিয়েছে। Communication থেকে শুরু করে final delivery—পুরো process-টাই ছিল খুব smooth। Highly recommended!",
@@ -873,6 +902,7 @@ function TestimonialSection() {
     },
     {
       name: "Adnan Islam",
+      gender: "male",
       role: "Digital Client • Online Business",
       avatar: "",
       quote: "শুধু Website তৈরি নয়, আমাদের business কীভাবে আরও professionalভাবে online-এ present করা যায়—সেটাও সুন্দরভাবে বুঝিয়ে দিয়েছে। Design quality এবং attention to detail দুটোই অসাধারণ।",
@@ -881,8 +911,6 @@ function TestimonialSection() {
   ];
 
   const clientReviews = testimonials && testimonials.length > 0 ? testimonials : defaultTestimonials;
-  const featured = clientReviews[0];
-  const supporting = clientReviews.slice(1, 4);
 
   return (
     <section className="section testimonials-section-editorial">
@@ -928,9 +956,7 @@ function TestimonialSection() {
               </div>
 
               <div className="testimonial-author-box">
-                {item.avatar && String(item.avatar).trim() ? (
-                  <img src={item.avatar} alt={item.name} loading="lazy" className="testimonial-avatar-img" />
-                ) : null}
+                <GenderAvatar item={item} />
                 <div className="testimonial-author-info">
                   <h3 className="testimonial-author-name">{item.name}</h3>
                   <span className="testimonial-author-role">{item.role || `${item.title || "Client"} • ${item.brand || "Techy BD"}`}</span>

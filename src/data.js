@@ -137,6 +137,7 @@ export const offers = [];
 export const testimonials = [
   {
     name: "Nowsin Zara",
+    gender: "female",
     role: "School Management System",
     brand: "School Client",
     quote: "আমাদের স্কুলের সমস্যাগুলো সমাধান করার জন্য আপনাকে আন্তরিক ধন্যবাদ। আপনার মূল্যবান সময় দিয়ে ধীরে ধীরে আমাদের সিস্টেমকে আরও উন্নত করা, সমস্যাগুলো চিহ্নিত করে সমাধান করা এবং একটি কার্যকর ও সুন্দর সিস্টেম তৈরি করে দেওয়ার জন্য আমরা সত্যিই কৃতজ্ঞ। আপনার সহযোগিতা ও আন্তরিক প্রচেষ্টার জন্য অসংখ্য ধন্যবাদ। ❤️",
@@ -144,6 +145,7 @@ export const testimonials = [
   },
   {
     name: "Ibrahim Ahmed",
+    gender: "male",
     role: "Business Client",
     brand: "Landing Page",
     quote: "আমাদের ব্যবসার জন্য অসাধারণ একটি Landing Page তৈরি করে দিয়েছে। Design, responsiveness এবং overall presentation—সবকিছুই অনেক professional। কাজের মান সত্যিই প্রশংসনীয়। ❤️",
@@ -151,6 +153,7 @@ export const testimonials = [
   },
   {
     name: "Ahad Molla",
+    gender: "male",
     role: "Website Client",
     brand: "Business Client",
     quote: "একটি সুন্দর ও professional Website দরকার ছিল, আর ঠিক আমাদের চাহিদা অনুযায়ী তৈরি করে দিয়েছে। Communication থেকে শুরু করে final delivery—পুরো process-টাই ছিল খুব smooth। Highly recommended!",
@@ -158,6 +161,7 @@ export const testimonials = [
   },
   {
     name: "Adnan Islam",
+    gender: "male",
     role: "Digital Client",
     brand: "Online Business Client",
     quote: "শুধু Website তৈরি নয়, আমাদের business কীভাবে আরও professionalভাবে online-এ present করা যায়—সেটাও সুন্দরভাবে বুঝিয়ে দিয়েছে। Design quality এবং attention to detail দুটোই অসাধারণ।",

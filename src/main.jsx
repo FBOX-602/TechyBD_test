@@ -349,65 +349,100 @@ function isVideoMedia(url) {
 
 function ProjectCard({ project, navigate }) {
   const shortName = project.title.split("—")[0]?.trim() || project.title;
-  const categoryTitle = project.category || "Web Project";
-  const whatsappMsg = encodeURIComponent(`Hi Techy BD, I am interested in ordering a website like "${project.title}".`);
-  const buyUrl = `https://wa.me/8801581503522?text=${whatsappMsg}`;
-  const isVideo = isVideoMedia(project.image);
-  const hasPrice = Boolean(project.price && String(project.price).trim());
+  const categoryTitle = project.category || "eCommerce";
 
   return (
-    <article className="framer-portfolio-card">
-      <div className="card-media-box">
-        {isVideo ? (
-          <video
-            src={project.image}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="card-thumb-img"
-          />
-        ) : (
-          <img src={project.image} alt={project.title} loading="lazy" className="card-thumb-img" />
-        )}
-        <span className="card-status-badge">{project.status || "LIVE"}</span>
-        {hasPrice && <span className="card-price-badge">{project.price}</span>}
+    <article className="product-item-card">
+      <div className="card-mockup-wrap">
+        <img src={project.image} alt={project.title} loading="lazy" className="card-mockup-img" />
       </div>
 
-      <div className="card-info-header">
-        <div className="name-title-group">
-          <h3 className="card-short-name">{shortName}</h3>
-          <span className="card-meta-title">{categoryTitle}</span>
-        </div>
-      </div>
-
-      <div className="card-action-row">
+      <div className="card-body-content">
+        <span className="card-category-label">{categoryTitle}</span>
+        <h4 className="card-project-title">{shortName}</h4>
         <a
-          href={project.href || `/work/${project.slug}`}
+          href={project.href || `https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20${encodeURIComponent(project.title)}`}
           target="_blank"
           rel="noreferrer"
-          className="framer-card-btn btn-preview"
+          className="card-view-link"
         >
-          Show Preview
-        </a>
-        <a
-          href={buyUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="framer-card-btn btn-buy"
-        >
-          Contact
+          View Project →
         </a>
       </div>
     </article>
   );
 }
 
-// Section 5, 7, 8: Featured Work Section & Project Filters
+// Section 5, 7, 8: Featured Work Section & Project Showcase (Same to Same as Reference Image)
 function FeaturedWork({ full = false, navigate }) {
   const [activeCategory, setActiveCategory] = useState("All");
-  const { projects, settings } = useSiteContent();
-  const work = settings.home.work;
+  const { projects: cmsProjects, settings } = useSiteContent();
+
+  const defaultProjectsList = [
+    {
+      id: "proj-1",
+      isFeaturedSpotlight: true,
+      number: "01",
+      eyebrow: "FEATURED PROJECT",
+      title: "GreenMart eCommerce",
+      category: "eCommerce",
+      description: "A modern eCommerce platform with advanced features, fast performance and beautiful UI/UX to boost online sales.",
+      tags: ["eCommerce", "Web Design", "Development", "UI/UX"],
+      image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      mobileImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=600&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20GreenMart%20eCommerce"
+    },
+    {
+      id: "proj-2",
+      title: "UrbanWear Store",
+      category: "eCommerce",
+      description: "Modern fashion eCommerce store designed for seamless shopping experience.",
+      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20UrbanWear%20Store"
+    },
+    {
+      id: "proj-3",
+      title: "Spice Village Restaurant",
+      category: "Restaurant",
+      description: "Elegant restaurant website with digital menu and online reservation system.",
+      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20Spice%20Village%20Restaurant"
+    },
+    {
+      id: "proj-4",
+      title: "Fixit Solutions",
+      category: "Service",
+      description: "Fast, reliable professional home services booking platform.",
+      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20Fixit%20Solutions"
+    },
+    {
+      id: "proj-5",
+      title: "SaaS Landing Page",
+      category: "Landing Pages",
+      description: "High-converting SaaS app landing page with interactive dashboard preview.",
+      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20SaaS%20Landing%20Page"
+    },
+    {
+      id: "proj-6",
+      title: "Online Learning Platform",
+      category: "Courses",
+      description: "Interactive e-learning portal with video courses and student progress tracking.",
+      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20Online%20Learning%20Platform"
+    },
+    {
+      id: "proj-7",
+      title: "GlowUp Skincare",
+      category: "Beauty & Skincare",
+      description: "Minimalist luxury beauty and skincare brand eCommerce store.",
+      image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop",
+      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20GlowUp%20Skincare"
+    }
+  ];
+
+  const projects = cmsProjects && cmsProjects.length > 0 ? cmsProjects : defaultProjectsList;
 
   const filterCategories = [
     "All",
@@ -428,29 +463,41 @@ function FeaturedWork({ full = false, navigate }) {
     });
   }, [projects, activeCategory]);
 
-  const displayedProjects = full ? filteredProjects : filteredProjects.slice(0, 6);
+  const spotlightProject = useMemo(() => {
+    return projects.find((p) => p.isFeaturedSpotlight) || projects[0];
+  }, [projects]);
+
+  const gridProjects = useMemo(() => {
+    if (activeCategory === "All" && spotlightProject) {
+      return filteredProjects.filter((p) => (p.id || p.slug) !== (spotlightProject.id || spotlightProject.slug));
+    }
+    return filteredProjects;
+  }, [filteredProjects, activeCategory, spotlightProject]);
 
   return (
-    <section className="section work-section-marketplace" id="selected-work">
-      <div className="container work-container-centered">
-        <div className="work-section-header">
-          <span className="section-label">SELECTED WORK</span>
-          <h2 className="section-title">{full ? work.pageTitle : "Selected Work"}</h2>
-          <p className="section-copy">
-            {full
-              ? work.pageCopy
-              : "A selection of websites we've designed and built for growing businesses and brands."}
+    <section className="product-showcase-master-section" id="selected-work">
+      <div className="container">
+        {/* Section Header */}
+        <div className="product-showcase-header">
+          <span className="product-eyebrow">SELECTED WORK</span>
+          <h2 className="product-display-title">
+            Digital experiences<br />
+            made to stand out.
+          </h2>
+          <p className="product-sub-copy">
+            Explore our complete showcase of eCommerce stores, business sites, landing pages, and web apps.
           </p>
         </div>
 
-        <div className="project-filter-tabs-wrap" role="tablist" aria-label="Project category filters">
+        {/* Category Filter Pills */}
+        <div className="product-filter-pills-row" role="tablist" aria-label="Project categories">
           {filterCategories.map((cat) => (
             <button
               key={cat}
               type="button"
               role="tab"
               aria-selected={activeCategory === cat}
-              className={`filter-tab-btn ${activeCategory === cat ? "active" : ""}`}
+              className={`product-filter-btn ${activeCategory === cat ? "active" : ""}`}
               onClick={() => setActiveCategory(cat)}
             >
               {cat}
@@ -458,32 +505,128 @@ function FeaturedWork({ full = false, navigate }) {
           ))}
         </div>
 
-        {displayedProjects.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#94a3b8" }}>
-            {projects.length === 0 ? (
-              <p>No projects published yet. Add your new projects from the Admin panel.</p>
-            ) : (
-              <p>
-                No projects under <strong>"{activeCategory}"</strong> category. Select <strong>"All"</strong> or <strong>"eCommerce"</strong> to view your added project.
-              </p>
-            )}
+        {/* Featured Spotlight Showcase Card (#01 GreenMart eCommerce) */}
+        {(activeCategory === "All" || activeCategory === "eCommerce") && spotlightProject && (
+          <div className="featured-spotlight-card">
+            <div className="spotlight-left-content">
+              <div className="spotlight-number-row">
+                <span className="spotlight-num">{spotlightProject.number || "01"}</span>
+                <span className="spotlight-line" />
+              </div>
+
+              <span className="spotlight-eyebrow">{spotlightProject.eyebrow || "FEATURED PROJECT"}</span>
+              <h3 className="spotlight-title">{spotlightProject.title}</h3>
+              <p className="spotlight-desc">{spotlightProject.description}</p>
+
+              <div className="spotlight-tags-row">
+                {(spotlightProject.tags || ["eCommerce", "Web Design", "Development", "UI/UX"]).map((tag, tIdx) => (
+                  <span key={tIdx} className={`spotlight-tag-pill ${tIdx === 0 ? "highlight" : ""}`}>
+                    {tIdx === 0 && <ShoppingBag size={13} style={{ marginRight: 4 }} />}
+                    {tIdx === 1 && <MonitorSmartphone size={13} style={{ marginRight: 4 }} />}
+                    {tIdx === 2 && <Code2 size={13} style={{ marginRight: 4 }} />}
+                    {tIdx === 3 && <Sparkles size={13} style={{ marginRight: 4 }} />}
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              <a
+                href={spotlightProject.href || `/contact`}
+                target="_blank"
+                rel="noreferrer"
+                className="spotlight-cta-btn"
+              >
+                View Project →
+              </a>
+            </div>
+
+            <div className="spotlight-right-media">
+              <div className="device-desktop-mockup">
+                <div className="browser-top-bar">
+                  <span className="dot red" />
+                  <span className="dot yellow" />
+                  <span className="dot green" />
+                  <span className="browser-url-pill">GreenMart</span>
+                </div>
+                <img src={spotlightProject.image} alt={spotlightProject.title} className="desktop-screen-img" />
+              </div>
+              {spotlightProject.mobileImage && (
+                <div className="device-mobile-mockup">
+                  <img src={spotlightProject.mobileImage} alt="Mobile App View" className="mobile-screen-img" />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* 6-Card Grid */}
+        {gridProjects.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
+            <p>No projects under <strong>"{activeCategory}"</strong>. Select <strong>"All"</strong> to view all projects.</p>
           </div>
         ) : (
-          <div className="framer-marketplace-grid">
-            {displayedProjects.map((project) => (
+          <div className="product-cards-grid">
+            {gridProjects.map((project) => (
               <ProjectCard key={project.slug || project.id} project={project} navigate={navigate} />
             ))}
           </div>
         )}
 
-        {!full && (
-          <div className="see-all-cta-container">
-            <LocalLink to="/work" navigate={navigate} className="see-all-projects-interactive-cta">
-              <span>See All Projects</span>
-              <span className="cta-arrow-badge">→</span>
-            </LocalLink>
+        {/* Metrics Bar */}
+        <div className="product-metrics-bar">
+          <div className="metric-box">
+            <div className="metric-icon-circle color-orange">
+              <PackageCheck size={18} />
+            </div>
+            <div className="metric-text-group">
+              <span className="metric-val">50+</span>
+              <span className="metric-lbl">Projects Completed</span>
+            </div>
           </div>
-        )}
+          <div className="metric-box">
+            <div className="metric-icon-circle color-amber">
+              <BarChart3 size={18} />
+            </div>
+            <div className="metric-text-group">
+              <span className="metric-val">10+</span>
+              <span className="metric-lbl">Industries Served</span>
+            </div>
+          </div>
+          <div className="metric-box">
+            <div className="metric-icon-circle color-green">
+              <CheckCircle2 size={18} />
+            </div>
+            <div className="metric-text-group">
+              <span className="metric-val">100%</span>
+              <span className="metric-lbl">Client Satisfaction</span>
+            </div>
+          </div>
+          <div className="metric-box">
+            <div className="metric-icon-circle color-teal">
+              <Clock size={18} />
+            </div>
+            <div className="metric-text-group">
+              <span className="metric-val">24/7</span>
+              <span className="metric-lbl">Support Available</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Banner ("Have a project in mind?") */}
+        <div className="product-bottom-cta-banner">
+          <div className="cta-left-group">
+            <div className="cta-rocket-badge">
+              <Rocket size={22} />
+            </div>
+            <div className="cta-text-group">
+              <h3>Have a project in mind?</h3>
+              <p>Let's build something amazing together.</p>
+            </div>
+          </div>
+          <LocalLink to="/contact" navigate={navigate} className="cta-orange-button">
+            Start a Project →
+          </LocalLink>
+        </div>
       </div>
     </section>
   );

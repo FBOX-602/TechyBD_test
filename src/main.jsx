@@ -6,15 +6,19 @@ import {
   ArrowRight,
   ArrowUpRight,
   BarChart3,
+  BookOpen,
   Check,
   CheckCircle2,
+  ChevronLeft,
   ChevronRight,
   Clock,
   ClipboardList,
   Cloud,
   Code2,
   ExternalLink,
+  Globe,
   Globe2,
+  Headphones,
   Heart,
   Layers,
   Lightbulb,
@@ -24,16 +28,20 @@ import {
   MonitorSmartphone,
   PackageCheck,
   PenTool,
+  PieChart,
   Quote,
   Rocket,
   Send,
+  Settings,
   ShieldCheck,
   ShoppingBag,
+  Smartphone,
   Sparkles,
   Star,
   Target,
   TrendingUp,
   User,
+  Users,
   X,
   Zap,
 } from "lucide-react";
@@ -102,6 +110,10 @@ function SectionHeading({ eyebrow, title, accent, copy, className = "", center =
 
 function IconForService({ name, size = 20 }) {
   const shared = { size, strokeWidth: 1.8 };
+  if (name === "monitor" || name === "desktop") return <MonitorSmartphone {...shared} />;
+  if (name === "code") return <Code2 {...shared} />;
+  if (name === "shopping-cart" || name === "cart") return <ShoppingBag {...shared} />;
+  if (name === "settings" || name === "gear") return <Settings {...shared} />;
   if (name === "user") return <User {...shared} />;
   if (name === "clipboard") return <ClipboardList {...shared} />;
   if (name === "pen" || name === "edit") return <PenTool {...shared} />;
@@ -477,114 +489,337 @@ function FeaturedWork({ full = false, navigate }) {
   );
 }
 
-// Section 9: Services Section ("What we build" - Reference Image Layout)
+// Section 9: Services Section ("Same to Same Design as Reference Image")
 function ServicesSection({ navigate }) {
   const { services } = useSiteContent();
+  const scrollRef = React.useRef(null);
+
+  const defaultServicesList = [
+    {
+      id: "service-1",
+      number: "01",
+      title: "Web Design",
+      slug: "web-design",
+      icon: "monitor",
+      color: "blue",
+      description: "Beautiful, user-focused designs that reflect your brand and convert visitors into customers.",
+      features: [
+        "Custom UI/UX Design",
+        "Responsive Design",
+        "Brand-focused Layouts",
+        "Interactive & Modern"
+      ]
+    },
+    {
+      id: "service-2",
+      number: "02",
+      title: "Web Development",
+      slug: "web-development",
+      icon: "code",
+      color: "green",
+      description: "Fast, secure and scalable websites built with clean code and the latest technologies.",
+      features: [
+        "Custom Website Development",
+        "CMS Integration",
+        "API & Third-party Integration",
+        "Performance Optimized"
+      ]
+    },
+    {
+      id: "service-3",
+      number: "03",
+      title: "eCommerce",
+      slug: "ecommerce",
+      icon: "shopping-cart",
+      color: "orange",
+      description: "Powerful eCommerce solutions that help you sell more and manage everything effortlessly.",
+      features: [
+        "Custom eCommerce Development",
+        "Secure Payment Integration",
+        "Product & Inventory Management",
+        "Order & Shipping System"
+      ]
+    },
+    {
+      id: "service-4",
+      number: "04",
+      title: "Landing Pages",
+      slug: "landing-pages",
+      icon: "rocket",
+      color: "purple",
+      description: "High-converting landing pages designed to capture leads and maximize conversions.",
+      features: [
+        "Conversion-focused Design",
+        "Lead Generation Forms",
+        "Fast Loading Speed",
+        "A/B Test Ready"
+      ]
+    },
+    {
+      id: "service-5",
+      number: "05",
+      title: "Automation",
+      slug: "automation",
+      icon: "settings",
+      color: "gold",
+      description: "Smart automation systems that save time, reduce manual work and improve efficiency.",
+      features: [
+        "Business Process Automation",
+        "Workflow & Task Automation",
+        "AI Automation Solutions",
+        "Integration & API Automation"
+      ]
+    }
+  ];
+
+  const displayServices = services && services.length > 0 ? services : defaultServicesList;
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -340, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 340, behavior: "smooth" });
+    }
+  };
+
+  const getFallbackFeatures = (title = "") => {
+    const t = title.toLowerCase();
+    if (t.includes("design")) return ["Custom UI/UX Design", "Responsive Design", "Brand-focused Layouts", "Interactive & Modern"];
+    if (t.includes("dev") || t.includes("code")) return ["Custom Website Development", "CMS Integration", "API & Third-party Integration", "Performance Optimized"];
+    if (t.includes("ecom") || t.includes("shop")) return ["Custom eCommerce Development", "Secure Payment Integration", "Product & Inventory Management", "Order & Shipping System"];
+    if (t.includes("land") || t.includes("page")) return ["Conversion-focused Design", "Lead Generation Forms", "Fast Loading Speed", "A/B Test Ready"];
+    return ["Business Process Automation", "Workflow & Task Automation", "AI Automation Solutions", "Integration & API Automation"];
+  };
 
   return (
-    <section className="section services-section-editorial">
-      <div className="container">
-        <div className="services-header-editorial">
-          <div className="services-eyebrow-row">
-            <span className="services-eyebrow">WHAT WE BUILD</span>
-            <span className="services-eyebrow-line" />
+    <div className="services-showcase-master-wrapper">
+      {/* 1. TOP HERO / HEADER BANNER */}
+      <section className="services-hero-banner">
+        <div className="container">
+          <div className="services-hero-grid">
+            {/* Left Copy */}
+            <div className="services-hero-left">
+              <div className="eyebrow-pill-badge">
+                <span className="eyebrow-dot" />
+                <span className="eyebrow-text">OUR SERVICES</span>
+              </div>
+              <h1 className="services-hero-title">
+                Digital Solutions Designed<br />
+                to <span className="accent-orange-text">Grow Your Business.</span>
+              </h1>
+              <p className="services-hero-lead">
+                We build high-performance websites, eCommerce stores and automation systems that help businesses look better, work smarter and scale faster.
+              </p>
+              <div className="services-hero-cta-row">
+                <LocalLink to="/contact" navigate={navigate} className="btn-primary-orange-pill">
+                  Start a Project <span className="btn-arrow">→</span>
+                </LocalLink>
+                <LocalLink to="/work" navigate={navigate} className="btn-secondary-glass-pill">
+                  View Our Work <span className="btn-close-icon">✕</span>
+                </LocalLink>
+              </div>
+            </div>
+
+            {/* Right Glass Stat Card */}
+            <div className="services-hero-right">
+              <div className="services-stats-glass-card">
+                <div className="glass-ambient-orange-arc" />
+                <div className="stats-row-grid">
+                  <div className="stat-box-item">
+                    <div className="stat-icon-wrapper color-orange">
+                      <PieChart size={18} />
+                    </div>
+                    <div className="stat-text-box">
+                      <span className="stat-number">10+</span>
+                      <span className="stat-label">Services</span>
+                    </div>
+                  </div>
+                  <div className="stat-box-item">
+                    <div className="stat-icon-wrapper color-orange">
+                      <Users size={18} />
+                    </div>
+                    <div className="stat-text-box">
+                      <span className="stat-number">50+</span>
+                      <span className="stat-label">Projects</span>
+                    </div>
+                  </div>
+                  <div className="stat-box-item">
+                    <div className="stat-icon-wrapper color-green">
+                      <Globe size={18} />
+                    </div>
+                    <div className="stat-text-box">
+                      <span className="stat-number">5+</span>
+                      <span className="stat-label">Industries</span>
+                    </div>
+                  </div>
+                  <div className="stat-box-item">
+                    <div className="stat-icon-wrapper color-amber">
+                      <Clock size={18} />
+                    </div>
+                    <div className="stat-text-box">
+                      <span className="stat-number">24/7</span>
+                      <span className="stat-label">Support</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="glass-card-divider" />
+                <p className="glass-card-trust-text">Trusted by growing businesses around the world.</p>
+
+                <div className="brand-logos-flex-row">
+                  <span className="brand-logo-item"><Sparkles size={13} /> DataSoft</span>
+                  <span className="brand-logo-item"><Layers size={13} /> GreenMart</span>
+                  <span className="brand-logo-item"><BookOpen size={13} /> EduPrime</span>
+                  <span className="brand-logo-item"><Globe size={13} /> Novus</span>
+                  <span className="brand-logo-item"><Zap size={13} /> PixelCraft</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <h2 className="services-display-title">
-            Digital experiences<br />
-            that drive <em className="accent-serif">real growth.</em>
-          </h2>
-          <p className="services-lead-copy">
-            From business websites to high-converting landing pages, we build digital experiences designed around your business goals.
-          </p>
         </div>
+      </section>
 
-        {services.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#94a3b8" }}>
-            <p>No services published yet. Add your new services from the Admin panel.</p>
+      {/* 2. MIDDLE SERVICES CAROUSEL SECTION */}
+      <section className="services-main-carousel-section">
+        <div className="container">
+          {/* Centered Header */}
+          <div className="services-carousel-header">
+            <div className="eyebrow-pill-badge centered">
+              <span className="eyebrow-dot" />
+              <span className="eyebrow-text">WHAT WE DO</span>
+            </div>
+            <h2 className="services-section-display-title">
+              Services That Drive <span className="accent-orange-text">Results</span>
+            </h2>
+            <p className="services-section-sub-copy">
+              From modern websites to powerful automation, we deliver end-to-end digital solutions.
+            </p>
           </div>
-        ) : (
-          <div className="services-editorial-grid">
-            <div className="services-grid-top-row">
-              {services.slice(0, 3).map((service, index) => (
-                <article className="service-card-editorial" key={service.slug || service.id}>
-                  <div className="service-card-top">
-                    <span className="service-icon-badge">
-                      <IconForService name={service.icon} size={20} />
-                    </span>
-                    <span className="service-number-badge">0{index + 1}</span>
-                  </div>
 
-                  {service.image && (
-                    <div className="service-media-wrap">
-                      {isVideoMedia(service.image) ? (
-                        <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
-                      ) : (
-                        <img src={service.image} alt={service.title} className="service-media-img" />
-                      )}
+          {/* Carousel with Navigation Controls */}
+          <div className="services-carousel-wrapper">
+            <button onClick={scrollLeft} className="carousel-control-btn left" aria-label="Previous service">
+              <ChevronLeft size={20} />
+            </button>
+
+            <div className="services-carousel-track" ref={scrollRef}>
+              {displayServices.map((service, idx) => {
+                const color = service.color || (idx === 0 ? "blue" : idx === 1 ? "green" : idx === 2 ? "orange" : idx === 3 ? "purple" : "gold");
+                const numberStr = service.number || (idx + 1 < 10 ? `0${idx + 1}` : `${idx + 1}`);
+                const featuresList = service.features && service.features.length > 0 ? service.features : getFallbackFeatures(service.title);
+
+                return (
+                  <article key={service.id || service.slug || idx} className="service-card-modern">
+                    <div className="card-top-header">
+                      <span className="card-number-badge">{numberStr}</span>
+                      <div className={`card-icon-box icon-bg-${color}`}>
+                        <IconForService name={service.icon} size={22} />
+                      </div>
                     </div>
-                  )}
 
-                  <div className="service-card-content">
-                    <h3 className="service-serif-title">{service.title}</h3>
-                    <p className="service-body-desc">{service.description}</p>
-                  </div>
+                    <h3 className="service-card-title">{service.title}</h3>
+                    <p className="service-card-desc">{service.description}</p>
 
-                  <div className="service-card-divider" />
+                    <ul className="service-feature-checklist">
+                      {featuresList.map((feat, fIdx) => (
+                        <li key={fIdx}>
+                          <span className={`check-icon color-${color}`}>✓</span>
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
 
-                  <div className="service-card-bottom">
-                    {service.price && String(service.price).trim() ? (
-                      <span className="service-price-bold">{service.price}</span>
-                    ) : <span />}
-                    <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
-                      Inquire →
+                    <LocalLink to="/contact" navigate={navigate} className="service-explore-link">
+                      Explore Service <span className="link-arrow">→</span>
                     </LocalLink>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
 
-            <div className="services-grid-bottom-row">
-              {services.slice(3, 5).map((service, index) => (
-                <article className="service-card-editorial" key={service.slug || service.id}>
-                  <div className="service-card-top">
-                    <span className="service-icon-badge">
-                      <IconForService name={service.icon} size={20} />
-                    </span>
-                    <span className="service-number-badge">0{index + 4}</span>
-                  </div>
+            <button onClick={scrollRight} className="carousel-control-btn right" aria-label="Next service">
+              <ChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+      </section>
 
-                  {service.image && (
-                    <div className="service-media-wrap">
-                      {isVideoMedia(service.image) ? (
-                        <video src={service.image} autoPlay loop muted playsInline className="service-media-img" />
-                      ) : (
-                        <img src={service.image} alt={service.title} className="service-media-img" />
-                      )}
-                    </div>
-                  )}
+      {/* 3. BOTTOM WHY BUSINESSES CHOOSE TECHY BD BANNER */}
+      <section className="why-choose-techybd-banner-section">
+        <div className="container">
+          <div className="why-choose-banner-card">
+            <div className="why-banner-grid">
+              {/* Title Box */}
+              <div className="why-title-col">
+                <h3>
+                  Why Businesses<br />
+                  Choose <span className="accent-orange-text">Techy BD</span>
+                </h3>
+              </div>
 
-                  <div className="service-card-content">
-                    <h3 className="service-serif-title">{service.title}</h3>
-                    <p className="service-body-desc">{service.description}</p>
-                  </div>
+              {/* Feature 1 */}
+              <div className="why-feature-col">
+                <div className="why-icon-badge color-blue">
+                  <Zap size={18} />
+                </div>
+                <div className="why-feature-text">
+                  <h4>Fast Delivery</h4>
+                  <p>On-time delivery without compromising quality.</p>
+                </div>
+              </div>
 
-                  <div className="service-card-divider" />
+              {/* Feature 2 */}
+              <div className="why-feature-col">
+                <div className="why-icon-badge color-green">
+                  <ShieldCheck size={18} />
+                </div>
+                <div className="why-feature-text">
+                  <h4>Premium Quality</h4>
+                  <p>High-quality design and clean, scalable code.</p>
+                </div>
+              </div>
 
-                  <div className="service-card-bottom">
-                    {service.price && String(service.price).trim() ? (
-                      <span className="service-price-bold">{service.price}</span>
-                    ) : <span />}
-                    <LocalLink to="/contact" navigate={navigate} className="service-inquire-btn">
-                      Inquire →
-                    </LocalLink>
-                  </div>
-                </article>
-              ))}
+              {/* Feature 3 */}
+              <div className="why-feature-col">
+                <div className="why-icon-badge color-purple">
+                  <Smartphone size={18} />
+                </div>
+                <div className="why-feature-text">
+                  <h4>Mobile First</h4>
+                  <p>Responsive and mobile-first design for every device.</p>
+                </div>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="why-feature-col">
+                <div className="why-icon-badge color-orange">
+                  <Target size={18} />
+                </div>
+                <div className="why-feature-text">
+                  <h4>Conversion Focused</h4>
+                  <p>Design and strategy focused on real results.</p>
+                </div>
+              </div>
+
+              {/* Feature 5 */}
+              <div className="why-feature-col">
+                <div className="why-icon-badge color-teal">
+                  <Headphones size={18} />
+                </div>
+                <div className="why-feature-text">
+                  <h4>Dedicated Support</h4>
+                  <p>24/7 support and ongoing assistance when you need.</p>
+                </div>
+              </div>
             </div>
           </div>
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }
 

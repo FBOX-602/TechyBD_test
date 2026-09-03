@@ -130,7 +130,83 @@ export const siteSettings = {
 
 export const projects = [];
 
-export const services = [];
+export const services = [
+  {
+    id: "service-1",
+    number: "01",
+    title: "Web Design",
+    slug: "web-design",
+    icon: "monitor",
+    color: "blue",
+    description: "Beautiful, user-focused designs that reflect your brand and convert visitors into customers.",
+    features: [
+      "Custom UI/UX Design",
+      "Responsive Design",
+      "Brand-focused Layouts",
+      "Interactive & Modern"
+    ]
+  },
+  {
+    id: "service-2",
+    number: "02",
+    title: "Web Development",
+    slug: "web-development",
+    icon: "code",
+    color: "green",
+    description: "Fast, secure and scalable websites built with clean code and the latest technologies.",
+    features: [
+      "Custom Website Development",
+      "CMS Integration",
+      "API & Third-party Integration",
+      "Performance Optimized"
+    ]
+  },
+  {
+    id: "service-3",
+    number: "03",
+    title: "eCommerce",
+    slug: "ecommerce",
+    icon: "shopping-cart",
+    color: "orange",
+    description: "Powerful eCommerce solutions that help you sell more and manage everything effortlessly.",
+    features: [
+      "Custom eCommerce Development",
+      "Secure Payment Integration",
+      "Product & Inventory Management",
+      "Order & Shipping System"
+    ]
+  },
+  {
+    id: "service-4",
+    number: "04",
+    title: "Landing Pages",
+    slug: "landing-pages",
+    icon: "rocket",
+    color: "purple",
+    description: "High-converting landing pages designed to capture leads and maximize conversions.",
+    features: [
+      "Conversion-focused Design",
+      "Lead Generation Forms",
+      "Fast Loading Speed",
+      "A/B Test Ready"
+    ]
+  },
+  {
+    id: "service-5",
+    number: "05",
+    title: "Automation",
+    slug: "automation",
+    icon: "settings",
+    color: "gold",
+    description: "Smart automation systems that save time, reduce manual work and improve efficiency.",
+    features: [
+      "Business Process Automation",
+      "Workflow & Task Automation",
+      "AI Automation Solutions",
+      "Integration & API Automation"
+    ]
+  }
+];
 
 export const offers = [];
 

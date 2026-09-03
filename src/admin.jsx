@@ -148,6 +148,26 @@ const resources = {
     template: { question: "", answer: "" },
     help: "Keep answers direct and specific. The first FAQ appears open on the public site.",
   },
+  profiles: {
+    label: "Profiles",
+    singular: "profile",
+    endpoint: "profiles",
+    icon: "customers",
+    description: "Team member & founder profiles displayed on the website.",
+    columns: ["name", "role", "linkedin", "whatsapp"],
+    fields: [
+      { name: "name", label: "Full Name", required: true, placeholder: "e.g. MD Omar Faruk" },
+      { name: "role", label: "Specialty / Title", required: true, placeholder: "e.g. AI Automation & Web Design Specialist" },
+      { name: "photo", label: "Profile Picture (Image URL)", type: "file", placeholder: "Upload image or paste URL (e.g. /omar-faruk.jpg)" },
+      { name: "bio", label: "Bio / Description", type: "textarea", required: true, rows: 5, placeholder: "Describe experience, AI automation skills, workflow expertise..." },
+      { name: "facebook", label: "Facebook Link (Optional)", type: "url", placeholder: "https://facebook.com/..." },
+      { name: "linkedin", label: "LinkedIn Link (Optional)", type: "url", placeholder: "https://linkedin.com/in/..." },
+      { name: "github", label: "GitHub Link (Optional)", type: "url", placeholder: "https://github.com/..." },
+      { name: "whatsapp", label: "WhatsApp Link or Number (Optional)", placeholder: "https://wa.me/8801581503522" },
+    ],
+    template: { name: "", role: "", photo: "", bio: "", facebook: "", linkedin: "", github: "", whatsapp: "" },
+    help: "Add or edit team members, uploaded picture, specialty title, bio description, and social media links.",
+  },
   settings: {
     label: "Site settings",
     singular: "site settings",
@@ -179,7 +199,7 @@ const resources = {
   },
 };
 
-const navResources = ["projects", "services", "offers", "testimonials", "customers", "faqs", "settings"];
+const navResources = ["projects", "services", "offers", "testimonials", "profiles", "customers", "faqs", "settings"];
 
 function safeJson(value) {
   try {

@@ -85,6 +85,7 @@ export default async function handler(req, res) {
         offers: getMemoryItems("offers"),
         testimonials: getMemoryItems("testimonials"),
         customers: getMemoryItems("customers"),
+        profiles: getMemoryItems("profiles"),
         faqs: getMemoryItems("faqs"),
         ...flatSettings(fallbackSet),
       });

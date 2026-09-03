@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { assets, faqItems, offers, projects, services, siteSettings, testimonials } from "./data";
+import { assets, faqItems, offers, profiles, projects, services, siteSettings, testimonials } from "./data";
 
 const ContentContext = createContext(null);
 
@@ -50,6 +50,7 @@ export const fallbackContent = Object.freeze({
   services: normalizeCollection(services, services, "service"),
   offers: normalizeCollection(offers, offers, "offer"),
   testimonials: normalizeCollection(testimonials, testimonials, "testimonial"),
+  profiles: normalizeCollection(profiles, profiles, "profile"),
   faqs: normalizeFaqs(faqItems),
 });
 
@@ -93,6 +94,12 @@ function normalizeContent(payload) {
   ];
   const finalOffers = deduplicateItems(mergedOffers);
 
+  const mergedProfiles = [
+    ...(Array.isArray(payload?.profiles) ? payload.profiles : []),
+    ...(Array.isArray(localStore?.profiles) ? localStore.profiles : []),
+  ];
+  const finalProfiles = deduplicateItems(mergedProfiles);
+
   const settings = mergeSettings(siteSettings, payload?.settings);
 
   return {
@@ -102,6 +109,7 @@ function normalizeContent(payload) {
     services: normalizeCollection(finalServices, services, "service"),
     offers: normalizeCollection(finalOffers, offers, "offer"),
     testimonials: normalizeCollection(payload?.testimonials, testimonials, "testimonial"),
+    profiles: normalizeCollection(finalProfiles, profiles, "profile"),
     faqs: normalizeFaqs(payload?.faqs),
   };
 }

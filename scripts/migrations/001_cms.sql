@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS site_settings CASCADE;
 -- 1. Create CMS Items Table (Supports projects, services, offers, testimonials, faqs, customers)
 CREATE TABLE cms_items (
   id TEXT PRIMARY KEY,
-  resource TEXT NOT NULL CHECK (resource IN ('projects', 'services', 'offers', 'testimonials', 'faqs', 'customers')),
+  resource TEXT NOT NULL CHECK (resource IN ('projects', 'services', 'offers', 'testimonials', 'faqs', 'customers', 'profiles')),
   item_key TEXT NOT NULL,
   sort_order INTEGER NOT NULL DEFAULT 0,
   data JSONB NOT NULL DEFAULT '{}'::jsonb,

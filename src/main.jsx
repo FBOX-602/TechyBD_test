@@ -329,30 +329,40 @@ function Hero({ navigate }) {
 
 // Section 4: Team Section (The People Behind Techy BD with Social Icons)
 function TeamSection() {
-  const teamMembers = [
+  const { profiles } = useSiteContent();
+
+  const defaultProfiles = [
     {
       name: "MD Omar Faruk",
       role: "AI Automation & Web Design Specialist",
       bio: "I design and build AI-powered automation systems, modern websites, and intelligent dashboard experiences that help businesses work smarter and more efficiently. I combine thoughtful design with AI and automation to create practical digital solutions that simplify workflows, improve user experiences, and support business growth.",
       photo: "/omar-faruk.jpg",
-      socials: [
-        { label: "Facebook", href: "https://www.facebook.com/share/18Jr82howW/", icon: "f" },
-        { label: "LinkedIn", href: "https://www.linkedin.com/in/badol-sk", icon: "in" },
-        { label: "WhatsApp", href: "https://wa.me/8801581503522", icon: "wa" },
-      ],
+      facebook: "https://www.facebook.com/share/18Jr82howW/",
+      linkedin: "https://www.linkedin.com/in/badol-sk",
+      whatsapp: "https://wa.me/8801581503522",
     },
     {
       name: "Jisune",
       role: "AI Systems & Integration Lead",
       bio: "I design and build AI-powered automation systems, intelligent agents, and custom API integrations that help businesses reduce manual work, streamline operations, and scale efficiently. From n8n workflows and CRM automation to AI products and browser extensions, I turn complex ideas into practical, reliable solutions.",
       photo: "/jisune.jpg",
-      socials: [
-        { label: "GitHub", href: "https://github.com/", icon: "git" },
-        { label: "LinkedIn", href: "https://www.linkedin.com/in/badol-sk", icon: "in" },
-        { label: "WhatsApp", href: "https://wa.me/8801581503522", icon: "wa" },
-      ],
+      github: "https://github.com/",
+      linkedin: "https://www.linkedin.com/in/badol-sk",
+      whatsapp: "https://wa.me/8801581503522",
     },
   ];
+
+  const memberList = profiles && profiles.length > 0 ? profiles : defaultProfiles;
+
+  const buildSocials = (member) => {
+    if (member.socials && Array.isArray(member.socials)) return member.socials;
+    const list = [];
+    if (member.facebook) list.push({ label: "Facebook", href: member.facebook, icon: "f" });
+    if (member.github) list.push({ label: "GitHub", href: member.github, icon: "git" });
+    if (member.linkedin) list.push({ label: "LinkedIn", href: member.linkedin, icon: "in" });
+    if (member.whatsapp) list.push({ label: "WhatsApp", href: member.whatsapp, icon: "wa" });
+    return list;
+  };
 
   return (
     <section className="section team-section-home">
@@ -366,35 +376,40 @@ function TeamSection() {
         </div>
 
         <div className="team-grid">
-          {teamMembers.map((member) => (
-            <div key={member.name} className="team-card">
-              <div className="team-photo-wrap">
-                <img
-                  src={member.photo}
-                  alt={`${member.name} — ${member.role} at Techy BD`}
-                  className="team-photo"
-                />
-              </div>
-              <h3 className="team-name">{member.name}</h3>
-              <p className="team-role">{member.role}</p>
-              <p className="team-bio">{member.bio}</p>
+          {memberList.map((member) => {
+            const socials = buildSocials(member);
+            return (
+              <div key={member.name || member.id} className="team-card">
+                <div className="team-photo-wrap">
+                  <img
+                    src={member.photo || member.image || "/omar-faruk.jpg"}
+                    alt={`${member.name} — ${member.role || "Team Member"} at Techy BD`}
+                    className="team-photo"
+                  />
+                </div>
+                <h3 className="team-name">{member.name}</h3>
+                <p className="team-role">{member.role}</p>
+                <p className="team-bio">{member.bio || member.description}</p>
 
-              <div className="team-social-links">
-                {member.socials.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={s.label}
-                    title={s.label}
-                  >
-                    {s.icon === "wa" ? <MessageCircle size={14} /> : s.icon}
-                  </a>
-                ))}
+                {socials.length > 0 && (
+                  <div className="team-social-links">
+                    {socials.map((s) => (
+                      <a
+                        key={s.label + s.href}
+                        href={s.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={s.label}
+                        title={s.label}
+                      >
+                        {s.icon === "wa" ? <MessageCircle size={14} /> : s.icon}
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

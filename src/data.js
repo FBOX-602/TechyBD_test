@@ -206,3 +206,28 @@ export const customers = [
     notes: "Maatir Saaj Product Store.",
   },
 ];
+
+export const profiles = [
+  {
+    id: "profile-1",
+    name: "MD Omar Faruk",
+    role: "AI Automation & Web Design Specialist",
+    bio: "I design and build AI-powered automation systems, modern websites, and intelligent dashboard experiences that help businesses work smarter and more efficiently. I combine thoughtful design with AI and automation to create practical digital solutions that simplify workflows, improve user experiences, and support business growth.",
+    photo: "/omar-faruk.jpg",
+    facebook: "https://www.facebook.com/share/18Jr82howW/",
+    linkedin: "https://www.linkedin.com/in/badol-sk",
+    whatsapp: "https://wa.me/8801581503522",
+    github: "",
+  },
+  {
+    id: "profile-2",
+    name: "Jisune",
+    role: "AI Systems & Integration Lead",
+    bio: "I design and build AI-powered automation systems, intelligent agents, and custom API integrations that help businesses reduce manual work, streamline operations, and scale efficiently. From n8n workflows and CRM automation to AI products and browser extensions, I turn complex ideas into practical, reliable solutions.",
+    photo: "/jisune.jpg",
+    facebook: "",
+    linkedin: "https://www.linkedin.com/in/badol-sk",
+    whatsapp: "https://wa.me/8801581503522",
+    github: "https://github.com/",
+  },
+];

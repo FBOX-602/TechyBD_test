@@ -490,7 +490,7 @@ function FeaturedWork({ full = false, navigate }) {
 }
 
 // Section 9: Services Section ("Same to Same Design as Reference Image")
-function ServicesSection({ navigate }) {
+function ServicesSection({ navigate, isHomePage = false }) {
   const { services } = useSiteContent();
   const scrollRef = React.useRef(null);
 
@@ -596,92 +596,94 @@ function ServicesSection({ navigate }) {
   };
 
   return (
-    <div className="services-showcase-master-wrapper">
-      {/* 1. TOP HERO / HEADER BANNER */}
-      <section className="services-hero-banner">
-        <div className="container">
-          <div className="services-hero-grid">
-            {/* Left Copy */}
-            <div className="services-hero-left">
-              <div className="eyebrow-pill-badge">
-                <span className="eyebrow-dot" />
-                <span className="eyebrow-text">OUR SERVICES</span>
-              </div>
-              <h1 className="services-hero-title">
-                Digital Solutions Designed<br />
-                to <span className="accent-orange-text">Grow Your Business.</span>
-              </h1>
-              <p className="services-hero-lead">
-                We build high-performance websites, eCommerce stores and automation systems that help businesses look better, work smarter and scale faster.
-              </p>
-              <div className="services-hero-cta-row">
-                <LocalLink to="/contact" navigate={navigate} className="btn-primary-orange-pill">
-                  Start a Project <span className="btn-arrow">→</span>
-                </LocalLink>
-                <LocalLink to="/work" navigate={navigate} className="btn-secondary-glass-pill">
-                  View Our Work <span className="btn-close-icon">✕</span>
-                </LocalLink>
-              </div>
-            </div>
-
-            {/* Right Glass Stat Card */}
-            <div className="services-hero-right">
-              <div className="services-stats-glass-card">
-                <div className="glass-ambient-orange-arc" />
-                <div className="stats-row-grid">
-                  <div className="stat-box-item">
-                    <div className="stat-icon-wrapper color-orange">
-                      <PieChart size={18} />
-                    </div>
-                    <div className="stat-text-box">
-                      <span className="stat-number">10+</span>
-                      <span className="stat-label">Services</span>
-                    </div>
-                  </div>
-                  <div className="stat-box-item">
-                    <div className="stat-icon-wrapper color-orange">
-                      <Users size={18} />
-                    </div>
-                    <div className="stat-text-box">
-                      <span className="stat-number">50+</span>
-                      <span className="stat-label">Projects</span>
-                    </div>
-                  </div>
-                  <div className="stat-box-item">
-                    <div className="stat-icon-wrapper color-green">
-                      <Globe size={18} />
-                    </div>
-                    <div className="stat-text-box">
-                      <span className="stat-number">5+</span>
-                      <span className="stat-label">Industries</span>
-                    </div>
-                  </div>
-                  <div className="stat-box-item">
-                    <div className="stat-icon-wrapper color-amber">
-                      <Clock size={18} />
-                    </div>
-                    <div className="stat-text-box">
-                      <span className="stat-number">24/7</span>
-                      <span className="stat-label">Support</span>
-                    </div>
-                  </div>
+    <div className={`services-showcase-master-wrapper ${isHomePage ? "is-home-page" : ""}`}>
+      {/* 1. TOP HERO / HEADER BANNER (Hidden on HomePage, visible on Services Page) */}
+      {!isHomePage && (
+        <section className="services-hero-banner">
+          <div className="container">
+            <div className="services-hero-grid">
+              {/* Left Copy */}
+              <div className="services-hero-left">
+                <div className="eyebrow-pill-badge">
+                  <span className="eyebrow-dot" />
+                  <span className="eyebrow-text">OUR SERVICES</span>
                 </div>
+                <h1 className="services-hero-title">
+                  Digital Solutions Designed<br />
+                  to <span className="accent-orange-text">Grow Your Business.</span>
+                </h1>
+                <p className="services-hero-lead">
+                  We build high-performance websites, eCommerce stores and automation systems that help businesses look better, work smarter and scale faster.
+                </p>
+                <div className="services-hero-cta-row">
+                  <LocalLink to="/contact" navigate={navigate} className="btn-primary-orange-pill">
+                    Start a Project <span className="btn-arrow">→</span>
+                  </LocalLink>
+                  <LocalLink to="/work" navigate={navigate} className="btn-secondary-glass-pill">
+                    View Our Work <span className="btn-close-icon">✕</span>
+                  </LocalLink>
+                </div>
+              </div>
 
-                <div className="glass-card-divider" />
-                <p className="glass-card-trust-text">Trusted by growing businesses around the world.</p>
+              {/* Right Glass Stat Card */}
+              <div className="services-hero-right">
+                <div className="services-stats-glass-card">
+                  <div className="glass-ambient-orange-arc" />
+                  <div className="stats-row-grid">
+                    <div className="stat-box-item">
+                      <div className="stat-icon-wrapper color-orange">
+                        <PieChart size={18} />
+                      </div>
+                      <div className="stat-text-box">
+                        <span className="stat-number">10+</span>
+                        <span className="stat-label">Services</span>
+                      </div>
+                    </div>
+                    <div className="stat-box-item">
+                      <div className="stat-icon-wrapper color-orange">
+                        <Users size={18} />
+                      </div>
+                      <div className="stat-text-box">
+                        <span className="stat-number">50+</span>
+                        <span className="stat-label">Projects</span>
+                      </div>
+                    </div>
+                    <div className="stat-box-item">
+                      <div className="stat-icon-wrapper color-green">
+                        <Globe size={18} />
+                      </div>
+                      <div className="stat-text-box">
+                        <span className="stat-number">5+</span>
+                        <span className="stat-label">Industries</span>
+                      </div>
+                    </div>
+                    <div className="stat-box-item">
+                      <div className="stat-icon-wrapper color-amber">
+                        <Clock size={18} />
+                      </div>
+                      <div className="stat-text-box">
+                        <span className="stat-number">24/7</span>
+                        <span className="stat-label">Support</span>
+                      </div>
+                    </div>
+                  </div>
 
-                <div className="brand-logos-flex-row">
-                  <span className="brand-logo-item"><Sparkles size={13} /> DataSoft</span>
-                  <span className="brand-logo-item"><Layers size={13} /> GreenMart</span>
-                  <span className="brand-logo-item"><BookOpen size={13} /> EduPrime</span>
-                  <span className="brand-logo-item"><Globe size={13} /> Novus</span>
-                  <span className="brand-logo-item"><Zap size={13} /> PixelCraft</span>
+                  <div className="glass-card-divider" />
+                  <p className="glass-card-trust-text">Trusted by growing businesses around the world.</p>
+
+                  <div className="brand-logos-flex-row">
+                    <span className="brand-logo-item"><Sparkles size={13} /> DataSoft</span>
+                    <span className="brand-logo-item"><Layers size={13} /> GreenMart</span>
+                    <span className="brand-logo-item"><BookOpen size={13} /> EduPrime</span>
+                    <span className="brand-logo-item"><Globe size={13} /> Novus</span>
+                    <span className="brand-logo-item"><Zap size={13} /> PixelCraft</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 2. MIDDLE SERVICES CAROUSEL SECTION */}
       <section className="services-main-carousel-section">
@@ -1354,7 +1356,7 @@ function HomePage({ navigate, onBuyItem }) {
     <>
       <Hero navigate={navigate} />
       <FeaturedWork navigate={navigate} onBuyItem={onBuyItem} />
-      <ServicesSection navigate={navigate} onBuyItem={onBuyItem} />
+      <ServicesSection navigate={navigate} onBuyItem={onBuyItem} isHomePage={true} />
       <WhySection />
       <ProcessSection />
       <TestimonialSection />
@@ -1379,7 +1381,7 @@ function ServicesPage({ navigate, onBuyItem }) {
   const services = settings.home.services;
   return (
     <>
-      <ServicesSection navigate={navigate} onBuyItem={onBuyItem} />
+      <ServicesSection navigate={navigate} onBuyItem={onBuyItem} isHomePage={false} />
       <FinalCTA navigate={navigate} />
     </>
   );

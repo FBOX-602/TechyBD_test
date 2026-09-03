@@ -181,12 +181,14 @@ body.public-site-body {
   outline-offset: 3px;
 }
 
-/* Header and hero: the navy workshop. */
-.public-site .site-header {
-  border-bottom: 1.5px solid var(--orange);
-  background: rgb(6 20 47 / 0.98);
-  box-shadow: none;
-  backdrop-filter: blur(14px);
+.public-site .site-header,
+.public-site .site-header.header-scrolled {
+  border-bottom: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  filter: none !important;
 }
 
 .public-site .header-inner { max-width: 1248px; min-height: 72px; padding: 0.7rem 1.5rem; }

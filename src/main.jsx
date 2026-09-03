@@ -851,10 +851,10 @@ function TestimonialSection() {
 
   const defaultTestimonials = [
     {
-      name: "ফারিয়া আজার",
-      role: "Founder • Skincare Arts",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop",
-      quote: "আমাদের স্টোরের জন্য template না, একদম আমাদের ব্র্যান্ডের মতো লেগেছে। তাদের ডিজাইন সেন্স এবং ডেভেলপমেন্ট এক্সিকিউশন দারুণ ছিল। কাজ করার অভিজ্ঞতা অসাধারণ।",
+      name: "Nowsin Zara",
+      role: "School Management System",
+      avatar: "",
+      quote: "আমাদের স্কুলের সমস্যাগুলো সমাধান করার জন্য আপনাকে আন্তরিক ধন্যবাদ। আপনার মূল্যবান সময় দিয়ে ধীরে ধীরে আমাদের সিস্টেমকে আরও উন্নত করা, সমস্যাগুলো চিহ্নিত করে সমাধান করা এবং একটি কার্যকর ও সুন্দর সিস্টেম তৈরি করে দেওয়ার জন্য আমরা সত্যিই কৃতজ্ঞ। আপনার সহযোগিতা ও আন্তরিক প্রচেষ্টার জন্য অসংখ্য ধন্যবাদ। ❤️",
       tag: "Featured Review",
     },
     {
@@ -880,7 +880,7 @@ function TestimonialSection() {
     },
   ];
 
-  const clientReviews = testimonials && testimonials.length >= 4 ? testimonials : defaultTestimonials;
+  const clientReviews = testimonials && testimonials.length > 0 ? testimonials : defaultTestimonials;
   const featured = clientReviews[0];
   const supporting = clientReviews.slice(1, 4);
 
@@ -928,7 +928,9 @@ function TestimonialSection() {
               </div>
 
               <div className="testimonial-author-box">
-                <img src={item.avatar} alt={item.name} loading="lazy" className="testimonial-avatar-img" />
+                {item.avatar && String(item.avatar).trim() ? (
+                  <img src={item.avatar} alt={item.name} loading="lazy" className="testimonial-avatar-img" />
+                ) : null}
                 <div className="testimonial-author-info">
                   <h3 className="testimonial-author-name">{item.name}</h3>
                   <span className="testimonial-author-role">{item.role || `${item.title || "Client"} • ${item.brand || "Techy BD"}`}</span>

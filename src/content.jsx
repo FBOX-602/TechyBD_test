@@ -54,51 +54,41 @@ export const fallbackContent = Object.freeze({
   faqs: normalizeFaqs(faqItems),
 });
 
-function deduplicateItems(items) {
-  if (!Array.isArray(items)) return [];
+function deduplicateItems(primaryItems, secondaryItems) {
   const map = new Map();
-  items.forEach((item) => {
-    if (!item) return;
-    const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
-    const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
-    if (!key) return;
 
-    const existing = map.get(key);
-    if (!existing) {
-      map.set(key, { ...item, id: item.id || key });
-    } else if (item.id && !existing.id) {
-      map.set(key, { ...item, id: item.id });
-    }
-  });
+  if (Array.isArray(secondaryItems)) {
+    secondaryItems.forEach((item) => {
+      if (!item) return;
+      const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
+      const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
+      if (key) map.set(key, { ...item, id: item.id || key });
+    });
+  }
+
+  if (Array.isArray(primaryItems)) {
+    primaryItems.forEach((item) => {
+      if (!item) return;
+      const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
+      const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
+      if (key) {
+        const existing = map.get(key);
+        map.set(key, { ...existing, ...item, id: item.id || existing?.id || key });
+      }
+    });
+  }
+
   return Array.from(map.values());
 }
 
 function normalizeContent(payload) {
   const localStore = getLocalCmsData() || {};
 
-  const mergedProjects = [
-    ...(Array.isArray(payload?.projects) ? payload.projects : []),
-    ...(Array.isArray(localStore?.projects) ? localStore.projects : []),
-  ];
-  const finalProjects = deduplicateItems(mergedProjects);
-
-  const mergedServices = [
-    ...(Array.isArray(payload?.services) ? payload.services : []),
-    ...(Array.isArray(localStore?.services) ? localStore.services : []),
-  ];
-  const finalServices = deduplicateItems(mergedServices);
-
-  const mergedOffers = [
-    ...(Array.isArray(payload?.offers) ? payload.offers : []),
-    ...(Array.isArray(localStore?.offers) ? localStore.offers : []),
-  ];
-  const finalOffers = deduplicateItems(mergedOffers);
-
-  const mergedProfiles = [
-    ...(Array.isArray(payload?.profiles) ? payload.profiles : []),
-    ...(Array.isArray(localStore?.profiles) ? localStore.profiles : []),
-  ];
-  const finalProfiles = deduplicateItems(mergedProfiles);
+  const finalProjects = deduplicateItems(localStore?.projects, payload?.projects);
+  const finalServices = deduplicateItems(localStore?.services, payload?.services);
+  const finalOffers = deduplicateItems(localStore?.offers, payload?.offers);
+  const finalProfiles = deduplicateItems(localStore?.profiles, payload?.profiles);
+  const finalTestimonials = deduplicateItems(localStore?.testimonials, payload?.testimonials);
 
   const settings = mergeSettings(siteSettings, payload?.settings);
 
@@ -108,7 +98,7 @@ function normalizeContent(payload) {
     projects: normalizeCollection(finalProjects, projects, "project"),
     services: normalizeCollection(finalServices, services, "service"),
     offers: normalizeCollection(finalOffers, offers, "offer"),
-    testimonials: normalizeCollection(payload?.testimonials, testimonials, "testimonial"),
+    testimonials: normalizeCollection(finalTestimonials, testimonials, "testimonial"),
     profiles: normalizeCollection(finalProfiles, profiles, "profile"),
     faqs: normalizeFaqs(payload?.faqs),
   };

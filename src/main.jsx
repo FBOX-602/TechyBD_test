@@ -468,45 +468,52 @@ function FeaturedWork({ full = false, navigate }) {
   }, [projects]);
 
   const gridProjects = useMemo(() => {
-    if (activeCategory === "All" && spotlightProject) {
-      return filteredProjects.filter((p) => (p.id || p.slug) !== (spotlightProject.id || spotlightProject.slug));
+    if (full) {
+      if (activeCategory === "All" && spotlightProject) {
+        return filteredProjects.filter((p) => (p.id || p.slug) !== (spotlightProject.id || spotlightProject.slug));
+      }
+      return filteredProjects;
     }
-    return filteredProjects;
-  }, [filteredProjects, activeCategory, spotlightProject]);
+    // On Home Page (full === false), show top 3 projects cleanly!
+    return projects.slice(0, 3);
+  }, [full, filteredProjects, activeCategory, spotlightProject, projects]);
 
   return (
-    <section className="product-showcase-master-section" id="selected-work">
+    <section className={`product-showcase-master-section ${!full ? "is-home-preview" : ""}`} id="selected-work">
       <div className="container">
         {/* Section Header */}
         <div className="product-showcase-header">
           <span className="product-eyebrow">SELECTED WORK</span>
           <h2 className="product-display-title">
-            Digital experiences<br />
-            made to stand out.
+            {full ? "Digital experiences made to stand out." : "Selected Work"}
           </h2>
           <p className="product-sub-copy">
-            Explore our complete showcase of eCommerce stores, business sites, landing pages, and web apps.
+            {full
+              ? "Explore our complete showcase of eCommerce stores, business sites, landing pages, and web apps."
+              : "A selection of websites we've designed and built for growing businesses."}
           </p>
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="product-filter-pills-row" role="tablist" aria-label="Project categories">
-          {filterCategories.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              role="tab"
-              aria-selected={activeCategory === cat}
-              className={`product-filter-btn ${activeCategory === cat ? "active" : ""}`}
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+        {/* Category Filter Pills (Full Project Page only) */}
+        {full && (
+          <div className="product-filter-pills-row" role="tablist" aria-label="Project categories">
+            {filterCategories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                role="tab"
+                aria-selected={activeCategory === cat}
+                className={`product-filter-btn ${activeCategory === cat ? "active" : ""}`}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
 
-        {/* Featured Spotlight Showcase Card (#01 GreenMart eCommerce) */}
-        {(activeCategory === "All" || activeCategory === "eCommerce") && spotlightProject && (
+        {/* Featured Spotlight Showcase Card (#01 GreenMart eCommerce - Full Project Page only) */}
+        {full && (activeCategory === "All" || activeCategory === "eCommerce") && spotlightProject && (
           <div className="featured-spotlight-card">
             <div className="spotlight-left-content">
               <div className="spotlight-number-row">
@@ -559,7 +566,7 @@ function FeaturedWork({ full = false, navigate }) {
           </div>
         )}
 
-        {/* 6-Card Grid */}
+        {/* Project Cards Grid */}
         {gridProjects.length === 0 ? (
           <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
             <p>No projects under <strong>"{activeCategory}"</strong>. Select <strong>"All"</strong> to view all projects.</p>
@@ -572,61 +579,74 @@ function FeaturedWork({ full = false, navigate }) {
           </div>
         )}
 
-        {/* Metrics Bar */}
-        <div className="product-metrics-bar">
-          <div className="metric-box">
-            <div className="metric-icon-circle color-orange">
-              <PackageCheck size={18} />
-            </div>
-            <div className="metric-text-group">
-              <span className="metric-val">50+</span>
-              <span className="metric-lbl">Projects Completed</span>
-            </div>
+        {/* "See More" Button on Home Page (when full === false) */}
+        {!full && (
+          <div className="see-more-projects-container">
+            <LocalLink to="/work" navigate={navigate} className="see-more-projects-btn">
+              <span>See More Projects</span>
+              <span className="btn-arrow">→</span>
+            </LocalLink>
           </div>
-          <div className="metric-box">
-            <div className="metric-icon-circle color-amber">
-              <BarChart3 size={18} />
-            </div>
-            <div className="metric-text-group">
-              <span className="metric-val">10+</span>
-              <span className="metric-lbl">Industries Served</span>
-            </div>
-          </div>
-          <div className="metric-box">
-            <div className="metric-icon-circle color-green">
-              <CheckCircle2 size={18} />
-            </div>
-            <div className="metric-text-group">
-              <span className="metric-val">100%</span>
-              <span className="metric-lbl">Client Satisfaction</span>
-            </div>
-          </div>
-          <div className="metric-box">
-            <div className="metric-icon-circle color-teal">
-              <Clock size={18} />
-            </div>
-            <div className="metric-text-group">
-              <span className="metric-val">24/7</span>
-              <span className="metric-lbl">Support Available</span>
-            </div>
-          </div>
-        </div>
+        )}
 
-        {/* Bottom Banner ("Have a project in mind?") */}
-        <div className="product-bottom-cta-banner">
-          <div className="cta-left-group">
-            <div className="cta-rocket-badge">
-              <Rocket size={22} />
+        {/* Metrics Bar & Bottom Banner (Full Project Page only) */}
+        {full && (
+          <>
+            <div className="product-metrics-bar">
+              <div className="metric-box">
+                <div className="metric-icon-circle color-orange">
+                  <PackageCheck size={18} />
+                </div>
+                <div className="metric-text-group">
+                  <span className="metric-val">50+</span>
+                  <span className="metric-lbl">Projects Completed</span>
+                </div>
+              </div>
+              <div className="metric-box">
+                <div className="metric-icon-circle color-amber">
+                  <BarChart3 size={18} />
+                </div>
+                <div className="metric-text-group">
+                  <span className="metric-val">10+</span>
+                  <span className="metric-lbl">Industries Served</span>
+                </div>
+              </div>
+              <div className="metric-box">
+                <div className="metric-icon-circle color-green">
+                  <CheckCircle2 size={18} />
+                </div>
+                <div className="metric-text-group">
+                  <span className="metric-val">100%</span>
+                  <span className="metric-lbl">Client Satisfaction</span>
+                </div>
+              </div>
+              <div className="metric-box">
+                <div className="metric-icon-circle color-teal">
+                  <Clock size={18} />
+                </div>
+                <div className="metric-text-group">
+                  <span className="metric-val">24/7</span>
+                  <span className="metric-lbl">Support Available</span>
+                </div>
+              </div>
             </div>
-            <div className="cta-text-group">
-              <h3>Have a project in mind?</h3>
-              <p>Let's build something amazing together.</p>
+
+            <div className="product-bottom-cta-banner">
+              <div className="cta-left-group">
+                <div className="cta-rocket-badge">
+                  <Rocket size={22} />
+                </div>
+                <div className="cta-text-group">
+                  <h3>Have a project in mind?</h3>
+                  <p>Let's build something amazing together.</p>
+                </div>
+              </div>
+              <LocalLink to="/contact" navigate={navigate} className="cta-orange-button">
+                Start a Project →
+              </LocalLink>
             </div>
-          </div>
-          <LocalLink to="/contact" navigate={navigate} className="cta-orange-button">
-            Start a Project →
-          </LocalLink>
-        </div>
+          </>
+        )}
       </div>
     </section>
   );

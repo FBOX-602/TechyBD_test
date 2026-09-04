@@ -4853,6 +4853,38 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   }
 }
 
+/* See More Projects Button on Home Page */
+.see-more-projects-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.25rem;
+}
+.see-more-projects-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.85rem 2.2rem;
+  border-radius: 999px;
+  background: #ff6200;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(255, 98, 0, 0.35);
+  transition: all 0.3s ease;
+}
+.see-more-projects-btn:hover {
+  background: #e55800;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 98, 0, 0.5);
+}
+.see-more-projects-btn .btn-arrow {
+  transition: transform 0.2s ease;
+}
+.see-more-projects-btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
 
 
 

@@ -378,71 +378,7 @@ function FeaturedWork({ full = false, navigate }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const { projects: cmsProjects, settings } = useSiteContent();
 
-  const defaultProjectsList = [
-    {
-      id: "proj-1",
-      isFeaturedSpotlight: true,
-      number: "01",
-      eyebrow: "FEATURED PROJECT",
-      title: "GreenMart eCommerce",
-      category: "eCommerce",
-      description: "A modern eCommerce platform with advanced features, fast performance and beautiful UI/UX to boost online sales.",
-      tags: ["eCommerce", "Web Design", "Development", "UI/UX"],
-      image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
-      mobileImage: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=600&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20GreenMart%20eCommerce"
-    },
-    {
-      id: "proj-2",
-      title: "UrbanWear Store",
-      category: "eCommerce",
-      description: "Modern fashion eCommerce store designed for seamless shopping experience.",
-      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=800&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20UrbanWear%20Store"
-    },
-    {
-      id: "proj-3",
-      title: "Spice Village Restaurant",
-      category: "Restaurant",
-      description: "Elegant restaurant website with digital menu and online reservation system.",
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20Spice%20Village%20Restaurant"
-    },
-    {
-      id: "proj-4",
-      title: "Fixit Solutions",
-      category: "Service",
-      description: "Fast, reliable professional home services booking platform.",
-      image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=800&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20Fixit%20Solutions"
-    },
-    {
-      id: "proj-5",
-      title: "SaaS Landing Page",
-      category: "Landing Pages",
-      description: "High-converting SaaS app landing page with interactive dashboard preview.",
-      image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20SaaS%20Landing%20Page"
-    },
-    {
-      id: "proj-6",
-      title: "Online Learning Platform",
-      category: "Courses",
-      description: "Interactive e-learning portal with video courses and student progress tracking.",
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=800&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20Online%20Learning%20Platform"
-    },
-    {
-      id: "proj-7",
-      title: "GlowUp Skincare",
-      category: "Beauty & Skincare",
-      description: "Minimalist luxury beauty and skincare brand eCommerce store.",
-      image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop",
-      href: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20GlowUp%20Skincare"
-    }
-  ];
-
-  const projects = cmsProjects && cmsProjects.length > 0 ? cmsProjects : defaultProjectsList;
+  const projects = Array.isArray(cmsProjects) ? cmsProjects : [];
 
   const filterCategories = [
     "All",

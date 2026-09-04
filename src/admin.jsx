@@ -705,28 +705,20 @@ function AdminApp() {
         } catch {}
 
         const storageKey = "techy_bd_cms_local_store_v1";
-        let localList = [];
+        let localList = null;
         try {
           const raw = localStorage.getItem(storageKey);
           const store = raw ? JSON.parse(raw) : {};
-          localList = store[view] || [];
+          if (Array.isArray(store[view])) {
+            localList = store[view];
+          }
         } catch {}
 
-        const mergedMap = new Map();
-        [...listFromApi, ...localList].forEach((item) => {
-          if (!item) return;
-          const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
-          const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
-          if (!key) return;
-
-          const existing = mergedMap.get(key);
-          if (!existing) {
-            mergedMap.set(key, { ...item, id: item.id || key });
-          } else if (item.id && !existing.id) {
-            mergedMap.set(key, { ...item, id: item.id });
-          }
-        });
-        setRecords(Array.from(mergedMap.values()));
+        if (localList !== null) {
+          setRecords(localList);
+        } else {
+          setRecords(listFromApi);
+        }
       }
     } catch (requestError) {
       setError(requestError.message || "Could not load this content.");
@@ -788,20 +780,23 @@ function AdminApp() {
       const storageKey = "techy_bd_cms_local_store_v1";
       const raw = localStorage.getItem(storageKey);
       const store = raw ? JSON.parse(raw) : {};
-      if (!store[resourceKey]) store[resourceKey] = [];
+      if (!Array.isArray(store[resourceKey])) {
+        store[resourceKey] = records && records.length > 0 ? [...records] : [];
+      }
 
       const itemData = payload.item ? payload.item : payload;
       const itemId = (existing ? getId(existing) : null) || itemData.id || itemData.slug || `item-${Date.now()}`;
-      const savedObj = { id: itemId, ...itemData };
+      const savedObj = { id: itemId, published: true, ...itemData };
 
-      const itemTitle = (itemData.title || itemData.name || "").toLowerCase().trim();
+      const itemTitle = (itemData.title || itemData.name || itemData.question || "").toLowerCase().trim();
       const idx = store[resourceKey].findIndex((x) => {
-        const xId = String(getId(x) || "");
-        const xTitle = (x.title || x.name || "").toLowerCase().trim();
-        if (itemId && xId === String(itemId)) return true;
+        const xId = String(getId(x) || "").toLowerCase().trim();
+        const xTitle = (x.title || x.name || x.question || "").toLowerCase().trim();
+        if (itemId && xId === String(itemId).toLowerCase().trim()) return true;
         if (itemTitle && xTitle === itemTitle) return true;
         return false;
       });
+
       if (idx >= 0) {
         store[resourceKey][idx] = { ...store[resourceKey][idx], ...savedObj };
       } else {
@@ -815,20 +810,24 @@ function AdminApp() {
     try {
       const storageKey = "techy_bd_cms_local_store_v1";
       const raw = localStorage.getItem(storageKey);
-      if (!raw) return;
-      const store = JSON.parse(raw);
-      if (store[resourceKey]) {
-        const itemId = String(getId(item) || "");
-        const itemTitle = (item?.title || item?.name || "").toLowerCase().trim();
-        store[resourceKey] = store[resourceKey].filter((x) => {
-          const xId = String(getId(x) || "");
-          const xTitle = (x?.title || x?.name || "").toLowerCase().trim();
-          if (itemId && xId === itemId) return false;
-          if (itemTitle && xTitle === itemTitle) return false;
-          return true;
-        });
-        localStorage.setItem(storageKey, JSON.stringify(store));
+      const store = raw ? JSON.parse(raw) : {};
+
+      if (!Array.isArray(store[resourceKey])) {
+        store[resourceKey] = records && records.length > 0 ? [...records] : [];
       }
+
+      const itemId = String(getId(item) || "").toLowerCase().trim();
+      const itemTitle = (item?.title || item?.name || item?.question || "").toLowerCase().trim();
+
+      store[resourceKey] = store[resourceKey].filter((x) => {
+        const xId = String(getId(x) || "").toLowerCase().trim();
+        const xTitle = (x?.title || x?.name || x?.question || "").toLowerCase().trim();
+        if (itemId && xId === itemId) return false;
+        if (itemTitle && xTitle === itemTitle) return false;
+        return true;
+      });
+
+      localStorage.setItem(storageKey, JSON.stringify(store));
     } catch {}
   };
 

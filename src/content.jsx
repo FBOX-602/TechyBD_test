@@ -54,53 +54,40 @@ export const fallbackContent = Object.freeze({
   faqs: normalizeFaqs(faqItems),
 });
 
-function deduplicateItems(primaryItems, secondaryItems) {
-  const map = new Map();
+function mergeResourceCollection(localItems, serverItems, fallbackDefaults, prefix) {
+  let baseList = null;
 
-  if (Array.isArray(secondaryItems)) {
-    secondaryItems.forEach((item) => {
-      if (!item) return;
-      const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
-      const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
-      if (key) map.set(key, { ...item, id: item.id || key });
-    });
+  if (Array.isArray(localItems)) {
+    baseList = localItems;
+  } else if (Array.isArray(serverItems) && serverItems.length > 0) {
+    baseList = serverItems;
+  } else {
+    baseList = fallbackDefaults;
   }
 
-  if (Array.isArray(primaryItems)) {
-    primaryItems.forEach((item) => {
-      if (!item) return;
-      const titleClean = (item.title || item.name || item.question || "").toLowerCase().trim();
-      const key = titleClean ? `title:${titleClean}` : String(item.id || item.slug || "");
-      if (key) {
-        const existing = map.get(key);
-        map.set(key, { ...existing, ...item, id: item.id || existing?.id || key });
-      }
-    });
-  }
-
-  return Array.from(map.values());
+  return (baseList || [])
+    .filter((item) => item && item.published !== false)
+    .map((item, index) => ({
+      ...item,
+      id: item.id || item.slug || `${prefix}-${index}`,
+      sortOrder: item.sortOrder ?? index,
+    }))
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 }
 
 function normalizeContent(payload) {
   const localStore = getLocalCmsData() || {};
-
-  const finalProjects = deduplicateItems(localStore?.projects, payload?.projects);
-  const finalServices = deduplicateItems(localStore?.services, payload?.services);
-  const finalOffers = deduplicateItems(localStore?.offers, payload?.offers);
-  const finalProfiles = deduplicateItems(localStore?.profiles, payload?.profiles);
-  const finalTestimonials = deduplicateItems(localStore?.testimonials, payload?.testimonials);
-
   const settings = mergeSettings(siteSettings, payload?.settings);
 
   return {
     settings,
     assets: { ...assets, ...(settings.assets || {}) },
-    projects: normalizeCollection(finalProjects, projects, "project"),
-    services: normalizeCollection(finalServices, services, "service"),
-    offers: normalizeCollection(finalOffers, offers, "offer"),
-    testimonials: normalizeCollection(finalTestimonials, testimonials, "testimonial"),
-    profiles: normalizeCollection(finalProfiles, profiles, "profile"),
-    faqs: normalizeFaqs(payload?.faqs),
+    projects: mergeResourceCollection(localStore?.projects, payload?.projects, projects, "project"),
+    services: mergeResourceCollection(localStore?.services, payload?.services, services, "service"),
+    offers: mergeResourceCollection(localStore?.offers, payload?.offers, offers, "offer"),
+    testimonials: mergeResourceCollection(localStore?.testimonials, payload?.testimonials, testimonials, "testimonial"),
+    profiles: mergeResourceCollection(localStore?.profiles, payload?.profiles, profiles, "profile"),
+    faqs: normalizeFaqs(localStore?.faqs || payload?.faqs),
   };
 }
 

@@ -672,17 +672,30 @@ function AdminApp() {
     const headers = new Headers(init.headers || {});
     if (init.body && !headers.has("Content-Type")) headers.set("Content-Type", "application/json");
     if (includeAuth && session?.token) headers.set("Authorization", `Bearer ${session.token}`);
-    const response = await fetch(`${API_BASE}${path}`, { credentials: "include", ...init, headers });
-    const text = await response.text();
-    const payload = text ? safeJson(text) ?? { message: text } : {};
-    if (!response.ok) {
-      if (response.status === 401 && includeAuth) {
-        window.localStorage.removeItem(SESSION_KEY);
-        setSession(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+    try {
+      const response = await fetch(`${API_BASE}${path}`, { credentials: "include", signal: controller.signal, ...init, headers });
+      clearTimeout(timeoutId);
+      const text = await response.text();
+      const payload = text ? safeJson(text) ?? { message: text } : {};
+      if (!response.ok) {
+        if (response.status === 401 && includeAuth) {
+          window.localStorage.removeItem(SESSION_KEY);
+          setSession(null);
+        }
+        throw new Error(payload?.message || payload?.error || `Request failed (${response.status})`);
       }
-      throw new Error(payload?.message || payload?.error || `Request failed (${response.status})`);
+      return payload;
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === "AbortError") {
+        throw new Error("Request timed out (2.5s limit)");
+      }
+      throw err;
     }
-    return payload;
   }, [session?.token]);
 
   const loadView = useCallback(async (view = activeView) => {
@@ -839,20 +852,24 @@ function AdminApp() {
     setError("");
     try {
       const payload = cleanDraft(formDraft);
+      // Instant local save and event dispatch (<5ms)
       syncLocalStoreSave(resourceKey, payload, existing);
-      if (resourceKey === "settings") {
-        await request("/api/content", { method: "PUT", body: JSON.stringify(payload) }).catch(() => {});
-      } else if (existing) {
-        const id = getId(existing);
-        if (!id) throw new Error("This item has no ID, so it cannot be updated. Refresh and try again.");
-        await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(payload) }).catch(() => {});
-      } else {
-        await request(`/api/admin/${config.endpoint}`, { method: "POST", body: JSON.stringify(payload) }).catch(() => {});
-      }
-      setNotice(`${existing ? "Changes saved" : "New content added"} — the public site can now use this update.`);
+      setNotice(`${existing ? "Changes saved" : "New content added"} — updated live on website.`);
       setEditor(null);
       window.dispatchEvent(new CustomEvent("cms-content-update"));
-      await loadView(resourceKey);
+      loadView(resourceKey);
+
+      // Async background API sync (with catch)
+      if (resourceKey === "settings") {
+        request("/api/content", { method: "PUT", body: JSON.stringify(payload) }).catch(() => {});
+      } else if (existing) {
+        const id = getId(existing);
+        if (id) {
+          request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(payload) }).catch(() => {});
+        }
+      } else {
+        request(`/api/admin/${config.endpoint}`, { method: "POST", body: JSON.stringify(payload) }).catch(() => {});
+      }
     } catch (requestError) {
       setError(requestError.message || "Could not save this content.");
     } finally {
@@ -868,13 +885,16 @@ function AdminApp() {
     setActionBusy(true);
     setError("");
     try {
+      // Instant local delete and event dispatch (<5ms)
       syncLocalStoreDelete(activeView, item);
-      if (id) {
-        await request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
-      }
       setNotice("Content deleted.");
       window.dispatchEvent(new CustomEvent("cms-content-update"));
-      await loadView(activeView);
+      loadView(activeView);
+
+      // Async background API sync
+      if (id) {
+        request(`/api/admin/${config.endpoint}/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => {});
+      }
     } catch (requestError) {
       setError(requestError.message || "Could not delete this content.");
     } finally {

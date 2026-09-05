@@ -92,27 +92,39 @@ function normalizeContent(payload) {
 }
 
 export function ContentProvider({ children }) {
-  const [content, setContent] = useState(fallbackContent);
+  const [content, setContent] = useState(() => normalizeContent(null));
 
   const reloadContent = useCallback(() => {
-    fetch("/api/content", { headers: { Accept: "application/json" } })
+    // Instantly update from local storage first for 0ms delay
+    setContent(normalizeContent(null));
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+    fetch("/api/content", {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    })
       .then((response) => {
+        clearTimeout(timeoutId);
         if (!response.ok) throw new Error(`Content request failed (${response.status})`);
         return response.json();
       })
       .then((payload) => setContent(normalizeContent(payload)))
       .catch((error) => {
-        if (error.name !== "AbortError") console.info("Using local content fallback until the CMS API is configured.");
+        clearTimeout(timeoutId);
+        if (error.name !== "AbortError") {
+          console.info("Using local content fallback until the CMS API is configured.");
+        }
       });
   }, []);
 
   useEffect(() => {
     reloadContent();
-    window.addEventListener("cms-content-update", reloadContent);
-    window.addEventListener("focus", reloadContent);
+    const handleCmsUpdate = () => reloadContent();
+    window.addEventListener("cms-content-update", handleCmsUpdate);
     return () => {
-      window.removeEventListener("cms-content-update", reloadContent);
-      window.removeEventListener("focus", reloadContent);
+      window.removeEventListener("cms-content-update", handleCmsUpdate);
     };
   }, [reloadContent]);
 

@@ -718,20 +718,30 @@ function AdminApp() {
         } catch {}
 
         const storageKey = "techy_bd_cms_local_store_v1";
-        let localList = null;
+        let localList = [];
         try {
           const raw = localStorage.getItem(storageKey);
           const store = raw ? JSON.parse(raw) : {};
-          if (Array.isArray(store[view])) {
-            localList = store[view];
-          }
+          localList = Array.isArray(store[view]) ? store[view] : [];
         } catch {}
 
-        if (localList !== null) {
-          setRecords(localList);
-        } else {
-          setRecords(listFromApi);
-        }
+        const mergedMap = new Map();
+        listFromApi.forEach((item) => {
+          if (!item) return;
+          const key = String(item.id || item.slug || item.title || "").toLowerCase().trim();
+          if (key) mergedMap.set(key, item);
+        });
+
+        localList.forEach((item) => {
+          if (!item) return;
+          const key = String(item.id || item.slug || item.title || "").toLowerCase().trim();
+          if (key) {
+            const existing = mergedMap.get(key);
+            mergedMap.set(key, existing ? { ...existing, ...item } : item);
+          }
+        });
+
+        setRecords(Array.from(mergedMap.values()));
       }
     } catch (requestError) {
       setError(requestError.message || "Could not load this content.");
@@ -798,16 +808,12 @@ function AdminApp() {
       }
 
       const itemData = payload.item ? payload.item : payload;
-      const itemId = (existing ? getId(existing) : null) || itemData.id || itemData.slug || `item-${Date.now()}`;
+      const itemId = (existing ? getId(existing) : null) || itemData.id || itemData.slug || `item-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
       const savedObj = { id: itemId, published: true, ...itemData };
 
-      const itemTitle = (itemData.title || itemData.name || itemData.question || "").toLowerCase().trim();
       const idx = store[resourceKey].findIndex((x) => {
         const xId = String(getId(x) || "").toLowerCase().trim();
-        const xTitle = (x.title || x.name || x.question || "").toLowerCase().trim();
-        if (itemId && xId === String(itemId).toLowerCase().trim()) return true;
-        if (itemTitle && xTitle === itemTitle) return true;
-        return false;
+        return itemId && xId === String(itemId).toLowerCase().trim();
       });
 
       if (idx >= 0) {

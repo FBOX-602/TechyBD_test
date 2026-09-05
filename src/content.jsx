@@ -55,23 +55,38 @@ export const fallbackContent = Object.freeze({
 });
 
 function mergeResourceCollection(localItems, serverItems, fallbackDefaults, prefix) {
-  let baseList = null;
+  const map = new Map();
 
-  if (Array.isArray(localItems)) {
-    baseList = localItems;
-  } else if (Array.isArray(serverItems) && serverItems.length > 0) {
-    baseList = serverItems;
-  } else {
-    baseList = fallbackDefaults;
+  // 1. Add all server items from Supabase
+  if (Array.isArray(serverItems)) {
+    serverItems.forEach((item, index) => {
+      if (!item || item.published === false) return;
+      const key = String(item.id || item.slug || item.title || `${prefix}-${index}`).toLowerCase().trim();
+      map.set(key, { ...item, id: item.id || item.slug || `${prefix}-${index}` });
+    });
   }
 
-  return (baseList || [])
-    .filter((item) => item && item.published !== false)
-    .map((item, index) => ({
-      ...item,
-      id: item.id || item.slug || `${prefix}-${index}`,
-      sortOrder: item.sortOrder ?? index,
-    }))
+  // 2. Overlay any local storage items
+  if (Array.isArray(localItems)) {
+    localItems.forEach((item, index) => {
+      if (!item || item.published === false) return;
+      const key = String(item.id || item.slug || item.title || `${prefix}-${index}`).toLowerCase().trim();
+      const existing = map.get(key);
+      map.set(key, existing ? { ...existing, ...item } : { ...item, id: item.id || item.slug || `${prefix}-${index}` });
+    });
+  }
+
+  // 3. Fallback defaults if completely empty
+  if (map.size === 0 && Array.isArray(fallbackDefaults)) {
+    fallbackDefaults.forEach((item, index) => {
+      if (!item || item.published === false) return;
+      const key = String(item.id || item.slug || item.title || `${prefix}-${index}`).toLowerCase().trim();
+      map.set(key, { ...item, id: item.id || item.slug || `${prefix}-${index}` });
+    });
+  }
+
+  return Array.from(map.values())
+    .map((item, index) => ({ ...item, sortOrder: item.sortOrder ?? index }))
     .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 }
 

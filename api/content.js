@@ -1,4 +1,4 @@
-import { getSettings, listItems, RESOURCES, updateSettings } from "../lib/cms/db.js";
+import { getSettings, listAllItems, updateSettings } from "../lib/cms/db.js";
 import { requireAdmin } from "../lib/cms/auth.js";
 import { isPlainObject, json, methodNotAllowed, noStore, readJson, sendError } from "../lib/cms/http.js";
 import { getMemoryItems } from "../lib/cms/memory-store.js";
@@ -66,13 +66,28 @@ export default async function handler(req, res) {
     if (req.method !== "GET") return methodNotAllowed(res, ["GET", "PUT", "PATCH"]);
 
     try {
-      const [settings, ...collections] = await Promise.all([
-        getSettings(),
-        ...RESOURCES.map((resource) => listItems(resource)),
+      const [settings, collections] = await Promise.all([
+        getSettings().catch(() => ({})),
+        listAllItems().catch(() => null),
       ]);
+
+      const projects = collections?.projects || getMemoryItems("projects");
+      const services = collections?.services || getMemoryItems("services");
+      const offers = collections?.offers || getMemoryItems("offers");
+      const testimonials = collections?.testimonials || getMemoryItems("testimonials");
+      const customers = collections?.customers || getMemoryItems("customers");
+      const profiles = collections?.profiles || getMemoryItems("profiles");
+      const faqs = collections?.faqs || getMemoryItems("faqs");
+
       return json(res, 200, {
-        settings,
-        ...Object.fromEntries(RESOURCES.map((resource, index) => [resource, collections[index]])),
+        settings: settings || {},
+        projects,
+        services,
+        offers,
+        testimonials,
+        customers,
+        profiles,
+        faqs,
         ...flatSettings(settings),
       });
     } catch (dbErr) {

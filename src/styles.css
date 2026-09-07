@@ -4204,6 +4204,8 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   gap: 1.5rem;
   overflow-x: auto;
   scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   padding: 0.75rem 0.5rem 1.75rem 0.5rem;
   width: 100%;
   scrollbar-width: none;
@@ -4214,9 +4216,9 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
 
 /* Service Card Modern */
 .service-card-modern {
-  min-width: 310px;
+  min-width: clamp(270px, 82vw, 320px);
   max-width: 320px;
-  flex: 0 0 310px;
+  flex: 0 0 clamp(270px, 82vw, 320px);
   border-radius: 1.25rem;
   background: linear-gradient(180deg, rgba(15, 32, 67, 0.85) 0%, rgba(10, 22, 48, 0.95) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -4224,6 +4226,10 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  scroll-snap-align: center;
   transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 .service-card-modern:hover {
@@ -4400,6 +4406,61 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   }
   .why-title-col {
     grid-column: span 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .services-main-carousel-section {
+    padding: 2.25rem 0 3rem 0;
+  }
+  .services-carousel-header {
+    margin-bottom: 2rem;
+  }
+  .services-carousel-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  .services-carousel-track {
+    order: 1;
+    width: 100%;
+    gap: 1rem;
+    padding: 0.5rem 0.25rem 1.25rem 0.25rem;
+  }
+  .carousel-control-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin: 0 !important;
+  }
+  .carousel-control-btn.left {
+    order: 2;
+  }
+  .carousel-control-btn.right {
+    order: 3;
+  }
+  .service-card-modern {
+    padding: 1.4rem 1.25rem 1.35rem 1.25rem;
+  }
+  .service-card-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .service-card-desc {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+    min-height: auto;
+  }
+  .service-feature-checklist {
+    margin-bottom: 1.25rem;
+    gap: 0.55rem;
+  }
+  .service-feature-checklist li {
+    font-size: 0.84rem;
   }
 }
 

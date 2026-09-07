@@ -220,24 +220,40 @@ function Header({ path, navigate }) {
       </div>
 
       {open && (
-        <div className="mobile-menu">
-          {nav.map(({ label, path: to }) => (
-            <LocalLink
-              key={to}
-              to={to}
-              navigate={navigate}
-              className={path === to ? "active" : ""}
-            >
-              {label}
-              <ChevronRight size={17} />
-            </LocalLink>
-          ))}
-          <LocalLink to={ctaLink} navigate={navigate} className="header-cta-top mobile-menu-cta-item">
-            <span className="cta-circle-icon">
-              <span className="cta-arrow">→</span>
-            </span>
-            <span className="cta-text">{ctaText}</span>
-          </LocalLink>
+        <div className="mobile-menu-wrapper">
+          <div className="mobile-menu-backdrop" onClick={() => setOpen(false)} />
+          <div className="mobile-menu-drawer">
+            <div className="mobile-menu-links">
+              {nav.map(({ label, path: to }) => {
+                const isActive = path === to || (to === "/work" && path.startsWith("/work/"));
+                return (
+                  <LocalLink
+                    key={to}
+                    to={to}
+                    navigate={navigate}
+                    className={`mobile-nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setOpen(false)}
+                  >
+                    <span className="mobile-nav-link-text">{label}</span>
+                    <ChevronRight size={18} className="mobile-nav-arrow" />
+                  </LocalLink>
+                );
+              })}
+            </div>
+            <div className="mobile-menu-footer">
+              <LocalLink
+                to={ctaLink}
+                navigate={navigate}
+                className="mobile-cta-btn"
+                onClick={() => setOpen(false)}
+              >
+                <span className="cta-circle-icon">
+                  <span className="cta-arrow">→</span>
+                </span>
+                <span className="cta-text">{ctaText}</span>
+              </LocalLink>
+            </div>
+          </div>
         </div>
       )}
     </header>

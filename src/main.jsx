@@ -200,9 +200,6 @@ function Header({ path, navigate }) {
             navigate={navigate}
             className={`header-cta ${scrolled ? "header-cta-scrolled" : "header-cta-top"}`}
           >
-            <span className="cta-circle-icon">
-              <span className="cta-arrow">→</span>
-            </span>
             <span className="cta-text">{ctaText}</span>
           </LocalLink>
 
@@ -247,9 +244,6 @@ function Header({ path, navigate }) {
                 className="mobile-cta-btn"
                 onClick={() => setOpen(false)}
               >
-                <span className="cta-circle-icon">
-                  <span className="cta-arrow">→</span>
-                </span>
                 <span className="cta-text">{ctaText}</span>
               </LocalLink>
             </div>

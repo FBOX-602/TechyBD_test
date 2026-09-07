@@ -200,8 +200,8 @@ body.public-site-body {
 .public-site .desktop-nav a:hover,
 .public-site .desktop-nav a.active { color: #fff; }
 .public-site .desktop-nav a.active::after { height: 3px; background: var(--orange); }
-.public-site .header-cta { border: 1.5px solid var(--orange); background: var(--orange); color: var(--ink); box-shadow: 3px 3px 0 #fff; font-weight: 800; }
-.public-site .header-cta:hover { filter: none; transform: none; box-shadow: 3px 3px 0 #fff; }
+.public-site .header-cta { border: 1.5px solid #FF6200; background: #FF6200 !important; color: #ffffff !important; box-shadow: 0 4px 15px rgba(255, 98, 0, 0.35); font-weight: 700; transition: all 0.25s ease; }
+.public-site .header-cta:hover { filter: none; transform: translateY(-2px); background: #e55800 !important; border-color: #e55800 !important; box-shadow: 0 8px 24px rgba(255, 98, 0, 0.5); }
 .public-site .menu-button { color: #fff; border-color: #b7c7e0; border-radius: 10px; background: transparent; }
 .public-site .mobile-menu { border-top-color: rgb(255 255 255 / 0.2); background: var(--ink); }
 .public-site .mobile-menu a { color: #dde8f8; }

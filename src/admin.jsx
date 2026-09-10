@@ -448,6 +448,40 @@ function isVideoMedia(url) {
   return url.startsWith("data:video/") || /\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url);
 }
 
+function compressImageFile(file, maxWidth = 1200, quality = 0.8, callback) {
+  if (!file.type.startsWith("image/")) {
+    const reader = new FileReader();
+    reader.onload = (e) => callback(e.target?.result || "");
+    reader.readAsDataURL(file);
+    return;
+  }
+  const img = new Image();
+  const url = URL.createObjectURL(file);
+  img.onload = () => {
+    URL.revokeObjectURL(url);
+    const canvas = document.createElement("canvas");
+    let width = img.width;
+    let height = img.height;
+    if (width > maxWidth) {
+      height = Math.round((height * maxWidth) / width);
+      width = maxWidth;
+    }
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, width, height);
+    const compressed = canvas.toDataURL("image/webp", quality);
+    callback(compressed);
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    const reader = new FileReader();
+    reader.onload = (e) => callback(e.target?.result || "");
+    reader.readAsDataURL(file);
+  };
+  img.src = url;
+}
+
 function MediaUploadField({ field, value, onChange }) {
   const id = `admin-field-${field.name}`;
   const fileInputRef = useRef(null);
@@ -460,11 +494,9 @@ function MediaUploadField({ field, value, onChange }) {
       alert("File size is too large (max 25MB). Please choose a smaller image or short video.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      onChange(field.name, event.target?.result || "");
-    };
-    reader.readAsDataURL(file);
+    compressImageFile(file, 1200, 0.8, (result) => {
+      onChange(field.name, result);
+    });
   };
 
   const handleDrop = (e) => {
@@ -475,11 +507,9 @@ function MediaUploadField({ field, value, onChange }) {
       alert("File size is too large (max 25MB). Please choose a smaller image or short video.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      onChange(field.name, event.target?.result || "");
-    };
-    reader.readAsDataURL(file);
+    compressImageFile(file, 1200, 0.8, (result) => {
+      onChange(field.name, result);
+    });
   };
 
   const isVideo = isVideoMedia(value);
@@ -674,7 +704,7 @@ function AdminApp() {
     if (includeAuth && session?.token) headers.set("Authorization", `Bearer ${session.token}`);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2500);
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
 
     try {
       const response = await fetch(`${API_BASE}${path}`, { credentials: "include", signal: controller.signal, ...init, headers });
@@ -692,7 +722,7 @@ function AdminApp() {
     } catch (err) {
       clearTimeout(timeoutId);
       if (err.name === "AbortError") {
-        throw new Error("Request timed out (2.5s limit)");
+        throw new Error("Request timed out (25s limit)");
       }
       throw err;
     }

@@ -114,7 +114,7 @@ export function ContentProvider({ children }) {
     setContent(normalizeContent(null));
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
+    const timeoutId = setTimeout(() => controller.abort(), 25000);
 
     fetch("/api/content", {
       headers: { Accept: "application/json" },

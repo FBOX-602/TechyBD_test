@@ -54,24 +54,82 @@ import "./studio-design.css";
 
 function useRoute() {
   const [path, setPath] = useState(() => window.location.pathname);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
-    const onPopState = () => setPath(window.location.pathname);
+    const onPopState = () => {
+      setIsNavigating(true);
+      setPath(window.location.pathname);
+      const timer = setTimeout(() => setIsNavigating(false), 220);
+      return () => clearTimeout(timer);
+    };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const navigate = (to) => {
+  const navigate = useCallback((to) => {
     if (to === window.location.pathname) {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
+    setIsNavigating(true);
     window.history.pushState({}, "", to);
     setPath(to);
     window.scrollTo({ top: 0, behavior: "instant" });
-  };
+    const timer = setTimeout(() => {
+      setIsNavigating(false);
+    }, 220);
+    return () => clearTimeout(timer);
+  }, []);
 
-  return { path, navigate };
+  return { path, navigate, isNavigating };
+}
+
+function BrandedLoader({ active }) {
+  const [visible, setVisible] = useState(active);
+  const [fadingOut, setFadingOut] = useState(false);
+
+  useEffect(() => {
+    if (active) {
+      setVisible(true);
+      setFadingOut(false);
+    } else {
+      setFadingOut(true);
+      const timer = setTimeout(() => {
+        setVisible(false);
+        setFadingOut(false);
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+  }, [active]);
+
+  if (!visible) return null;
+
+  return (
+    <div className={`branded-page-loader ${fadingOut ? "loader-fade-out" : "loader-fade-in"}`} aria-label="Loading page">
+      <div className="loader-top-progress-bar">
+        <div className="loader-progress-glow-track" />
+      </div>
+
+      <div className="loader-center-content">
+        <div className="loader-logo-wrapper">
+          <div className="loader-pulse-glow" />
+          <div className="loader-orbit-ring" />
+          <img src="/techy-bd-logo.png" alt="Techy BD" className="loader-brand-logo" />
+        </div>
+
+        <div className="loader-brand-title">
+          <span>Techy</span><span className="accent-orange">.BD</span>
+        </div>
+
+        <div className="loader-dots-indicator">
+          <span className="loader-dot" />
+          <span className="loader-dot" />
+          <span className="loader-dot" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function LocalLink({ to, navigate, children, className = "", onClick, ...props }) {
@@ -1944,9 +2002,19 @@ function ContactPage({ navigate }) {
 }
 
 function App() {
-  const { path, navigate } = useRoute();
+  const { path, navigate, isNavigating } = useRoute();
   const { settings } = useSiteContent();
   const route = path.replace(/\/$/, "") || "/";
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInitialLoading(false);
+    }, 320);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const isLoading = initialLoading || isNavigating;
 
   useEffect(() => {
     document.body.classList.toggle("public-site-body", route !== "/admin");
@@ -2041,8 +2109,22 @@ function App() {
     };
   }, [route]);
 
-  if (route === "/admin") return <AdminApp />;
-  if (route === "/account" || route === "/login") return <CustomerApp navigate={navigate} />;
+  if (route === "/admin") {
+    return (
+      <>
+        <BrandedLoader active={isLoading} />
+        <AdminApp />
+      </>
+    );
+  }
+  if (route === "/account" || route === "/login") {
+    return (
+      <>
+        <BrandedLoader active={isLoading} />
+        <CustomerApp navigate={navigate} />
+      </>
+    );
+  }
 
   let page;
   if (route === "/") page = <HomePage navigate={navigate} />;
@@ -2051,14 +2133,14 @@ function App() {
     const slug = route.replace("/work/", "");
     page = <CaseStudyPage slug={slug} navigate={navigate} />;
   } else if (route === "/services") page = <ServicesPage navigate={navigate} />;
-  // else if (route === "/about") page = <AboutPage navigate={navigate} />;
   else if (route === "/contact") page = <ContactPage navigate={navigate} />;
   else page = <HomePage navigate={navigate} />;
 
   return (
     <div className="public-site">
+      <BrandedLoader active={isLoading} />
       <Header path={route} navigate={navigate} />
-      <main>{page}</main>
+      <main className="page-transition-wrap" key={route}>{page}</main>
       <Footer navigate={navigate} />
       <MobileActions navigate={navigate} />
     </div>

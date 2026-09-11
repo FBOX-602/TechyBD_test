@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Activity,
@@ -60,8 +60,7 @@ function useRoute() {
     const onPopState = () => {
       setIsNavigating(true);
       setPath(window.location.pathname);
-      const timer = setTimeout(() => setIsNavigating(false), 220);
-      return () => clearTimeout(timer);
+      setTimeout(() => setIsNavigating(false), 220);
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -76,10 +75,9 @@ function useRoute() {
     window.history.pushState({}, "", to);
     setPath(to);
     window.scrollTo({ top: 0, behavior: "instant" });
-    const timer = setTimeout(() => {
+    setTimeout(() => {
       setIsNavigating(false);
     }, 220);
-    return () => clearTimeout(timer);
   }, []);
 
   return { path, navigate, isNavigating };

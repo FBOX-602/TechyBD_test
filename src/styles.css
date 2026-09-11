@@ -5074,58 +5074,30 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
    BRANDED PREMIUM LOADING ANIMATION SYSTEM (Techy BD)
    ========================================================================== */
 
-.branded-page-loader {
+.top-branded-progress-loader {
   position: fixed;
-  inset: 0;
-  z-index: 99999;
-  background: radial-gradient(circle at 50% 45%, #0d2044 0%, #061023 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  pointer-events: auto;
-  user-select: none;
-}
-
-.branded-page-loader.loader-fade-in {
-  animation: loaderContainerFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.branded-page-loader.loader-fade-out {
-  animation: loaderContainerFadeOut 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  pointer-events: none;
-}
-
-@keyframes loaderContainerFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes loaderContainerFadeOut {
-  from { opacity: 1; transform: scale(1); }
-  to { opacity: 0; transform: scale(1.025); }
-}
-
-/* Top Progress Line Glow */
-.loader-top-progress-bar {
-  position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.05);
+  height: 3.5px;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
   overflow: hidden;
-  z-index: 10;
+  background: rgba(255, 98, 0, 0.1);
 }
 
-.loader-progress-glow-track {
+.top-branded-progress-loader.is-active {
+  opacity: 1;
+}
+
+.top-progress-glow-bar {
   height: 100%;
   width: 45%;
-  background: linear-gradient(90deg, transparent 0%, #FF6200 50%, #ff944d 80%, transparent 100%);
-  box-shadow: 0 0 15px #FF6200, 0 0 30px rgba(255, 98, 0, 0.6);
-  animation: loaderTopLineGlow 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  background: linear-gradient(90deg, transparent 0%, #FF6200 50%, #ff944d 85%, transparent 100%);
+  box-shadow: 0 0 16px #FF6200, 0 0 32px rgba(255, 98, 0, 0.7);
+  animation: loaderTopLineGlow 1.1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes loaderTopLineGlow {
@@ -5133,126 +5105,15 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   100% { transform: translateX(250%); }
 }
 
-/* Center Content Stack */
-.loader-center-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-}
-
-/* Logo & Orbital Ring Container */
-.loader-logo-wrapper {
-  position: relative;
-  width: 90px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Ambient Orange Radial Pulse Aura */
-.loader-pulse-glow {
-  position: absolute;
-  inset: -15px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 98, 0, 0.35) 0%, rgba(255, 98, 0, 0.08) 50%, transparent 70%);
-  animation: loaderAuraPulse 2s ease-in-out infinite;
-}
-
-@keyframes loaderAuraPulse {
-  0%, 100% { transform: scale(0.92); opacity: 0.6; }
-  50% { transform: scale(1.15); opacity: 1; }
-}
-
-/* Orbital Rotating Gradient Ring */
-.loader-orbit-ring {
-  position: absolute;
-  inset: -2px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.08);
-  border-top-color: #FF6200;
-  border-right-color: rgba(255, 98, 0, 0.5);
-  animation: loaderSpinOrbit 1.1s cubic-bezier(0.55, 0.055, 0.675, 0.19) infinite;
-  filter: drop-shadow(0 0 10px rgba(255, 98, 0, 0.8));
-}
-
-@keyframes loaderSpinOrbit {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Inner Brand Logo */
-.loader-brand-logo {
-  width: 54px;
-  height: 54px;
-  object-fit: contain;
-  position: relative;
-  z-index: 3;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
-  animation: loaderLogoBreathing 2s ease-in-out infinite;
-}
-
-@keyframes loaderLogoBreathing {
-  0%, 100% { transform: scale(0.96); filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5)); }
-  50% { transform: scale(1.04); filter: drop-shadow(0 0 20px rgba(255, 98, 0, 0.4)); }
-}
-
-/* Brand Text Title */
-.loader-brand-title {
-  margin-top: 1.35rem;
-  font-family: var(--font-sans);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: #ffffff;
-  letter-spacing: -0.02em;
-  display: flex;
-  align-items: center;
-  gap: 0.15rem;
-  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-}
-
-.loader-brand-title .accent-orange {
-  color: #FF6200;
-}
-
-/* Minimal Animated Dots Status */
-.loader-dots-indicator {
-  margin-top: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.loader-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #FF6200;
-  box-shadow: 0 0 8px #FF6200;
-  animation: loaderDotWave 1.2s ease-in-out infinite;
-}
-
-.loader-dot:nth-child(1) { animation-delay: 0s; }
-.loader-dot:nth-child(2) { animation-delay: 0.2s; }
-.loader-dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes loaderDotWave {
-  0%, 60%, 100% { transform: translateY(0) scale(0.7); opacity: 0.3; }
-  30% { transform: translateY(-4px) scale(1.2); opacity: 1; }
-}
-
 /* Page Entry Scale & Fade Animation */
 .page-transition-wrap {
-  animation: pageScaleFadeIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: pageScaleFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes pageScaleFadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.995);
+    transform: translateY(6px) scale(0.996);
   }
   to {
     opacity: 1;

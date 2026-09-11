@@ -85,49 +85,10 @@ function useRoute() {
   return { path, navigate, isNavigating };
 }
 
-function BrandedLoader({ active }) {
-  const [visible, setVisible] = useState(active);
-  const [fadingOut, setFadingOut] = useState(false);
-
-  useEffect(() => {
-    if (active) {
-      setVisible(true);
-      setFadingOut(false);
-    } else {
-      setFadingOut(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
-        setFadingOut(false);
-      }, 350);
-      return () => clearTimeout(timer);
-    }
-  }, [active]);
-
-  if (!visible) return null;
-
+function BrandedProgressLoader({ active }) {
   return (
-    <div className={`branded-page-loader ${fadingOut ? "loader-fade-out" : "loader-fade-in"}`} aria-label="Loading page">
-      <div className="loader-top-progress-bar">
-        <div className="loader-progress-glow-track" />
-      </div>
-
-      <div className="loader-center-content">
-        <div className="loader-logo-wrapper">
-          <div className="loader-pulse-glow" />
-          <div className="loader-orbit-ring" />
-          <img src="/techy-bd-logo.png" alt="Techy BD" className="loader-brand-logo" />
-        </div>
-
-        <div className="loader-brand-title">
-          <span>Techy</span><span className="accent-orange">.BD</span>
-        </div>
-
-        <div className="loader-dots-indicator">
-          <span className="loader-dot" />
-          <span className="loader-dot" />
-          <span className="loader-dot" />
-        </div>
-      </div>
+    <div className={`top-branded-progress-loader ${active ? "is-active" : ""}`} aria-hidden="true">
+      <div className="top-progress-glow-bar" />
     </div>
   );
 }
@@ -2112,7 +2073,7 @@ function App() {
   if (route === "/admin") {
     return (
       <>
-        <BrandedLoader active={isLoading} />
+        <BrandedProgressLoader active={isLoading} />
         <AdminApp />
       </>
     );
@@ -2120,7 +2081,7 @@ function App() {
   if (route === "/account" || route === "/login") {
     return (
       <>
-        <BrandedLoader active={isLoading} />
+        <BrandedProgressLoader active={isLoading} />
         <CustomerApp navigate={navigate} />
       </>
     );
@@ -2138,7 +2099,7 @@ function App() {
 
   return (
     <div className="public-site">
-      <BrandedLoader active={isLoading} />
+      <BrandedProgressLoader active={isLoading} />
       <Header path={route} navigate={navigate} />
       <main className="page-transition-wrap" key={route}>{page}</main>
       <Footer navigate={navigate} />

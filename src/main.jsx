@@ -24,6 +24,7 @@ import {
   Layers,
   Lightbulb,
   Mail,
+  MapPin,
   Menu,
   MessageCircle,
   MonitorSmartphone,
@@ -48,6 +49,43 @@ import {
   Zap,
 } from "lucide-react";
 import { ContentProvider, useSiteContent } from "./content";
+
+function IconFacebook({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+    </svg>
+  );
+}
+
+function IconInstagram({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function IconLinkedin({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  );
+}
+
+function IconYoutube({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17z" />
+      <polygon points="10 15 15 12 10 9 10 15" fill="currentColor" />
+    </svg>
+  );
+}
 import AdminApp from "./admin";
 import CustomerApp, { addCustomerOrder, getCustomerSession } from "./customer";
 import StudioFaq from "./components/StudioFaq";
@@ -2024,10 +2062,13 @@ function ContactPage({ navigate }) {
     whatsapp: "01581503522",
     whatsappUrl: "https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%27d%20like%20to%20discuss%20a%20website%20project.",
     availability: "All Days",
+    address: "196/D, Amtola, Khilkhet",
+    locationDetail: "Nampapara, Dhaka-1229",
     socials: {
       facebook: "https://www.facebook.com/share/18Jr82howW/",
       instagram: "https://www.instagram.com/iambadolskofficial",
       linkedin: "https://www.linkedin.com/in/badol-sk",
+      youtube: "https://youtube.com/@techybd",
     },
   };
 
@@ -2060,7 +2101,7 @@ function ContactPage({ navigate }) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       const message = `Hi Techy BD,\n\nI'd like to discuss a website project:\n• Name: ${firstName} ${lastName}\n• Email: ${email}\n• Project Details: ${projectNotes}`;
       const userWaUrl = `https://wa.me/8801581503522?text=${encodeURIComponent(message)}`;
-      
+
       setSubmitted(true);
       setIsSubmitting(false);
       window.open(userWaUrl, "_blank", "noopener,noreferrer");
@@ -2072,157 +2113,200 @@ function ContactPage({ navigate }) {
   };
 
   return (
-    <div className="contact-page-redesign">
-      <div className="container contact-container-redesign">
-        {/* Left Column: Essential contact information */}
-        <div className="contact-left-col">
-          <h1 className="contact-display-title">
-            Let's build something<br />
-            great for your business.
+    <div className="contact-page-same-to-same">
+      <div className="container contact-container-same">
+        {/* Left Column: Direct contact info & brand text */}
+        <div className="contact-left-col-same">
+          <div className="contact-eyebrow-badge">
+            <span className="eyebrow-dash">—</span> GET IN TOUCH
+          </div>
+
+          <h1 className="contact-display-title-same">
+            Let’s build something<br />
+            <span className="accent-orange-text">great together.</span>
           </h1>
 
-          <p className="contact-lead-text">
+          <p className="contact-lead-text-same">
             Have a website idea or need a better digital experience? Tell us what you're looking for and we'll get back to you.
           </p>
 
-          <div className="contact-direct-info-group">
-            {/* EMAIL */}
-            <div className="contact-info-block">
-              <span className="contact-info-label">
-                <Mail size={13} className="info-icon" /> EMAIL
-              </span>
-              <a href={`mailto:${contact.email || "info@techybd.com"}`} className="contact-info-value-link">
-                {contact.email || "info@techybd.com"}
-              </a>
-            </div>
-
-            {/* PHONE / WHATSAPP */}
-            <div className="contact-info-block">
-              <span className="contact-info-label">
-                <MessageCircle size={13} className="info-icon" /> PHONE / WHATSAPP
-              </span>
-              <div className="contact-info-phone-actions">
-                <a href={`tel:${contact.phone || "01581503522"}`} className="contact-info-value-link">
-                  {contact.phone || "01581503522"}
+          {/* Stacked Contact Info Card Box */}
+          <div className="contact-info-card-box">
+            {/* 1. EMAIL */}
+            <div className="contact-info-row-item">
+              <div className="contact-icon-square">
+                <Mail size={18} />
+              </div>
+              <div className="contact-info-details">
+                <small className="info-label-sm">Email</small>
+                <a href={`mailto:${contact.email || "info@techybd.com"}`} className="info-value-main-link">
+                  {contact.email || "info@techybd.com"}
                 </a>
+                <span className="info-subtext-sm">We usually reply within 24 hours.</span>
               </div>
             </div>
 
-            {/* AVAILABLE */}
-            <div className="contact-info-block">
-              <span className="contact-info-label">
-                <Check size={13} className="info-icon" /> AVAILABLE
-              </span>
-              <span className="contact-info-value-text">
-                {contact.availability || "All Days"}
-              </span>
+            {/* 2. PHONE / WHATSAPP */}
+            <div className="contact-info-row-item">
+              <div className="contact-icon-square">
+                <MessageCircle size={18} />
+              </div>
+              <div className="contact-info-details">
+                <small className="info-label-sm">Phone / WhatsApp</small>
+                <a href={`tel:${contact.phone || "01581503522"}`} className="info-value-main-link">
+                  {contact.phone || "01581503522"}
+                </a>
+                <span className="info-subtext-sm">Call or message us anytime.</span>
+              </div>
+            </div>
+
+            {/* 3. AVAILABLE */}
+            <div className="contact-info-row-item">
+              <div className="contact-icon-square">
+                <Clock size={18} />
+              </div>
+              <div className="contact-info-details">
+                <small className="info-label-sm">Available</small>
+                <strong className="info-value-main-text">{contact.availability || "All Days"}</strong>
+                <span className="info-subtext-sm">We're open every day, ready to help.</span>
+              </div>
+            </div>
+
+            {/* 4. OUR LOCATION */}
+            <div className="contact-info-row-item">
+              <div className="contact-icon-square">
+                <MapPin size={18} />
+              </div>
+              <div className="contact-info-details">
+                <small className="info-label-sm">Our Location</small>
+                <strong className="info-value-main-text">{contact.address || "196/D, Amtola, Khilkhet"}</strong>
+                <span className="info-subtext-sm">{contact.locationDetail || "Nampapara, Dhaka-1229"}</span>
+              </div>
             </div>
           </div>
 
-          {/* Optional Social Links */}
-          {contact.socials && (
-            <div className="contact-social-row">
-              {contact.socials.facebook && (
-                <a href={contact.socials.facebook} target="_blank" rel="noreferrer" aria-label="Facebook">
-                  f
-                </a>
-              )}
-              {contact.socials.instagram && (
-                <a href={contact.socials.instagram} target="_blank" rel="noreferrer" aria-label="Instagram">
-                  ◎
-                </a>
-              )}
-              {contact.socials.linkedin && (
-                <a href={contact.socials.linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
-                  in
-                </a>
-              )}
+          {/* Social Follow Links */}
+          <div className="contact-social-follow-wrap">
+            <span className="social-follow-label">Follow Us</span>
+            <div className="social-icon-btns-row">
+              <a href={contact.socials?.facebook || "https://facebook.com"} target="_blank" rel="noreferrer" aria-label="Facebook">
+                <IconFacebook size={16} />
+              </a>
+              <a href={contact.socials?.instagram || "https://instagram.com"} target="_blank" rel="noreferrer" aria-label="Instagram">
+                <IconInstagram size={16} />
+              </a>
+              <a href={contact.socials?.linkedin || "https://linkedin.com"} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                <IconLinkedin size={16} />
+              </a>
+              <a href={contact.socials?.youtube || "https://youtube.com"} target="_blank" rel="noreferrer" aria-label="YouTube">
+                <IconYoutube size={16} />
+              </a>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Right Column: Contact Form Card */}
-        <div className="contact-right-col">
-          <div className="contact-form-card">
-            <form className="contact-form-inner" onSubmit={submit} noValidate>
+        <div className="contact-right-col-same">
+          <div className="contact-form-card-same">
+            <div className="form-top-ambient-glow" />
+
+            <div className="form-header-box">
+              <span className="form-eyebrow-orange">SEND US A MESSAGE</span>
+              <h2 className="form-title-display">How can we help you?</h2>
+              <p className="form-subtitle-copy">Fill out the form below and we'll get back to you as soon as possible.</p>
+            </div>
+
+            <form className="contact-form-inner-same" onSubmit={submit} noValidate>
               {/* Row 1: First Name & Last Name */}
-              <div className="form-row-2col">
-                <div className="form-field">
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    id="firstName"
-                    required
-                    name="firstName"
-                    type="text"
-                    autoComplete="given-name"
-                    placeholder="Enter your first name..."
-                  />
+              <div className="form-row-2col-same">
+                <div className="field-group-same">
+                  <label htmlFor="firstName">First Name <span className="req-star">*</span></label>
+                  <div className="input-with-left-icon">
+                    <User size={16} className="field-icon-left" />
+                    <input
+                      id="firstName"
+                      required
+                      name="firstName"
+                      type="text"
+                      autoComplete="given-name"
+                      placeholder="Enter your first name"
+                    />
+                  </div>
                 </div>
-                <div className="form-field">
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    id="lastName"
-                    required
-                    name="lastName"
-                    type="text"
-                    autoComplete="family-name"
-                    placeholder="Enter your last name..."
-                  />
+
+                <div className="field-group-same">
+                  <label htmlFor="lastName">Last Name <span className="req-star">*</span></label>
+                  <div className="input-with-left-icon">
+                    <User size={16} className="field-icon-left" />
+                    <input
+                      id="lastName"
+                      required
+                      name="lastName"
+                      type="text"
+                      autoComplete="family-name"
+                      placeholder="Enter your last name"
+                    />
+                  </div>
                 </div>
               </div>
 
               {/* Row 2: Email Address */}
-              <div className="form-field">
-                <label htmlFor="email">Email Address</label>
-                <input
-                  id="email"
-                  required
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="Enter your email address..."
-                />
+              <div className="field-group-same">
+                <label htmlFor="email">Email Address <span className="req-star">*</span></label>
+                <div className="input-with-left-icon">
+                  <Mail size={16} className="field-icon-left" />
+                  <input
+                    id="email"
+                    required
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="Enter your email address"
+                  />
+                </div>
               </div>
 
               {/* Row 3: Tell us about your project */}
-              <div className="form-field">
-                <label htmlFor="notes">Tell us about your project</label>
-                <textarea
-                  id="notes"
-                  required
-                  name="notes"
-                  rows="5"
-                  placeholder="Tell us about your business, website idea, or what you'd like us to build..."
-                />
+              <div className="field-group-same">
+                <label htmlFor="notes">Tell us about your project <span className="req-star">*</span></label>
+                <div className="input-with-left-icon textarea-wrap">
+                  <MessageCircle size={16} className="field-icon-left textarea-icon" />
+                  <textarea
+                    id="notes"
+                    required
+                    name="notes"
+                    rows="4"
+                    placeholder="Tell us about your business, website idea, or what you'd like us to build..."
+                  />
+                </div>
               </div>
 
-              {errorMsg && <p className="form-error-notice">{errorMsg}</p>}
+              {errorMsg && <p className="form-error-notice-same">{errorMsg}</p>}
+              {submitted && <p className="form-success-notice-same">✓ Message sent! Redirecting to WhatsApp...</p>}
 
-              {/* Row 4: Primary Form Button & WhatsApp Action */}
-              <div className="form-actions-stack">
+              {/* Row 4: Primary Form Button & WhatsApp Action Side-by-Side */}
+              <div className="form-buttons-row-same">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="button button-primary form-cta-btn"
+                  className="contact-primary-submit-btn"
                 >
-                  {isSubmitting ? "Sending..." : "Send Message →"}
+                  <Send size={16} />
+                  <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
+                  <span className="btn-arrow-right">→</span>
                 </button>
 
                 <a
                   href={directWhatsappUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="button button-secondary whatsapp-cta-btn"
+                  className="contact-whatsapp-outline-btn"
                 >
-                  <MessageCircle size={16} /> Chat on WhatsApp →
+                  <MessageCircle size={16} />
+                  <span>Chat on WhatsApp</span>
+                  <span className="btn-arrow-right">→</span>
                 </a>
               </div>
-
-              {submitted && (
-                <p className="form-success-notice">
-                  <Check size={18} /> Thanks! Your message has been sent. We'll get back to you soon.
-                </p>
-              )}
             </form>
           </div>
         </div>

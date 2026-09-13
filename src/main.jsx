@@ -1391,14 +1391,50 @@ function parseListField(val, fallback = []) {
   return fallback;
 }
 
-// Section 13: Case Study Experience Page
+// Section 13: Case Study Experience Page (Redesigned per Reference)
 function CaseStudyPage({ slug, navigate }) {
   const { projects, isLoading } = useSiteContent();
   const project = projects.find((p) => p.slug === slug || p.id === slug);
 
+  const keyFeaturesList = useMemo(() => {
+    return parseListField(project?.keyFeatures, [
+      "Mobile-first responsive storefront",
+      "Direct Cash on Delivery & bKash checkout",
+      "Fast loading times",
+      "Clear product hierarchy",
+    ]);
+  }, [project]);
+
+  const resultsList = useMemo(() => {
+    return parseListField(project?.results, [
+      "Better product presentation",
+      "Improved mobile experience",
+      "Clearer navigation",
+      "Stronger visual hierarchy",
+    ]);
+  }, [project]);
+
+  const technologiesList = useMemo(() => parseListField(project?.technologies, []), [project]);
+  const galleryList = useMemo(() => parseListField(project?.gallery, []), [project]);
+
+  const screenshots = useMemo(() => {
+    if (!project) return [];
+    const list = [];
+    if (project.image) list.push(project.image);
+    if (project.mobileImage && !list.includes(project.mobileImage)) list.push(project.mobileImage);
+    if (Array.isArray(galleryList)) {
+      galleryList.forEach((img) => {
+        if (img && !list.includes(img)) list.push(img);
+      });
+    }
+    return list.length > 0 ? list : [project?.image || "/furnish-mockup.png"];
+  }, [project, galleryList]);
+
+  const [activeImgIdx, setActiveImgIdx] = useState(0);
+
   if (isLoading && !project) {
     return (
-      <div className="case-study-page" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div className="case-study-redesign-wrapper" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <BrandedCenterSpinner text="Loading Case Study..." />
       </div>
     );
@@ -1416,150 +1452,221 @@ function CaseStudyPage({ slug, navigate }) {
     );
   }
 
-  const statusClass = project.status === "LIVE" ? "status-live" : "status-concept";
+  const domainDisplay = project.href
+    ? project.href.replace(/^https?:\/\//, "").replace(/\/$/, "")
+    : `${project.slug || "project"}.com`;
 
-  const keyFeaturesList = parseListField(project.keyFeatures, [
-    "Mobile-first responsive storefront",
-    "Direct Cash on Delivery & bKash checkout",
-    "Fast loading times",
-    "Clear product hierarchy",
-  ]);
+  const prevImage = () => {
+    setActiveImgIdx((prev) => (prev === 0 ? screenshots.length - 1 : prev - 1));
+  };
 
-  const resultsList = parseListField(project.results, [
-    "Better product presentation",
-    "Improved mobile experience",
-    "Clearer navigation",
-    "Stronger visual hierarchy",
-  ]);
+  const nextImage = () => {
+    setActiveImgIdx((prev) => (prev === screenshots.length - 1 ? 0 : prev + 1));
+  };
 
-  const technologiesList = parseListField(project.technologies, []);
-  const galleryList = parseListField(project.gallery, []);
+  const narrativeSteps = [
+    {
+      num: "01",
+      title: "Overview",
+      content: project.overview || project.description || "A modern and premium eCommerce website designed for effortless shopping. It features curated furniture collections, room-based browsing, detailed product displays, customer reviews, and a clean, elegant interface. The website combines warm visual aesthetics with straightforward BDT pricing, smooth navigation, fast delivery information, easy returns, and reliable customer support for a complete online furniture shopping experience.",
+    },
+    {
+      num: "02",
+      title: "The Challenge",
+      content: project.challenge || "The client needed a mobile-optimized storefront that built instant buyer trust, loaded fast on local networks, and streamlined the order checkout process.",
+    },
+    {
+      num: "03",
+      title: "Our Approach",
+      content: project.approach || "We structured a clean hierarchy, designed a mobile-first catalog, integrated native bKash/COD payment options, and eliminated friction steps during order entry.",
+    },
+    {
+      num: "04",
+      title: "Design Direction",
+      content: project.designDirection || "Clean typography, comfortable spacing, high-contrast action buttons, and purposeful product imagery.",
+    },
+  ];
 
   return (
-    <div className="case-study-page">
-      <div className="container">
-        <div className="case-study-header">
-          <LocalLink to="/work" navigate={navigate} className="back-link">
+    <div className="case-study-redesign-wrapper">
+      {/* 1. HERO SECTION */}
+      <section className="cs-hero-section">
+        <div className="cs-container">
+          <LocalLink to="/work" navigate={navigate} className="cs-back-link">
             <ArrowLeft size={16} /> Back to Work
           </LocalLink>
-          <div className="case-study-meta-badges">
-            <span className={`project-status-badge ${statusClass}`}>{project.status || "LIVE"}</span>
-            <span className="project-category-badge">{project.category}</span>
+
+          <div className="cs-hero-grid">
+            {/* Left Hero Content */}
+            <div className="cs-hero-content-col">
+              <div className="cs-meta-badges-row">
+                <span className="cs-status-badge">{project.status || "LIVE"}</span>
+                <span className="cs-category-badge">{project.category || "eCommerce"}</span>
+              </div>
+
+              <h1 className="cs-display-title">{project.title}</h1>
+
+              <p className="cs-lead-desc">
+                <span className="cs-orange-dash">—</span> {project.description}
+              </p>
+
+              <div className="cs-metadata-pills-row">
+                <div className="cs-meta-pill-item">
+                  <span className="cs-pill-icon"><Clock size={16} /></span>
+                  <div className="cs-pill-text">
+                    <small>Project Date</small>
+                    <strong>2024</strong>
+                  </div>
+                </div>
+
+                <div className="cs-meta-pill-item">
+                  <span className="cs-pill-icon"><Globe size={16} /></span>
+                  <div className="cs-pill-text">
+                    <small>Website</small>
+                    <strong>{domainDisplay}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {project.href && (
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="cs-primary-visit-btn"
+                >
+                  Visit Live Website <ArrowUpRight size={18} />
+                </a>
+              )}
+            </div>
+
+            {/* Right Hero Image Frame with Arch Backdrop */}
+            <div className="cs-hero-visual-col">
+              <div className="cs-hero-arch-backdrop" />
+              <div className="cs-hero-image-card">
+                <img src={screenshots[activeImgIdx] || project.image} alt={project.title} />
+              </div>
+
+              {screenshots.length > 1 && (
+                <div className="cs-carousel-nav-controls">
+                  <button type="button" onClick={prevImage} aria-label="Previous screenshot">
+                    <ChevronLeft size={16} />
+                  </button>
+                  <span>{activeImgIdx + 1} / {screenshots.length}</span>
+                  <button type="button" onClick={nextImage} aria-label="Next screenshot">
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-          <h1 className="case-study-title">{project.title}</h1>
-          <p className="case-study-lead">{project.description}</p>
-
-          {project.href && (
-            <a
-              href={project.href}
-              target="_blank"
-              rel="noreferrer"
-              className="button button-primary case-study-live-btn"
-            >
-              Visit Live Website <ArrowUpRight size={17} />
-            </a>
-          )}
         </div>
+      </section>
 
-        <div className="case-study-hero-image">
-          <img src={project.image} alt={project.title} />
-        </div>
+      {/* 2. MAIN 2-COLUMN GRID SECTION */}
+      <section className="cs-body-section">
+        <div className="cs-container cs-body-grid">
+          {/* Left Column: Featured Mockup & Narrative Steps */}
+          <div className="cs-main-column">
+            {/* Desktop Mockup Frame */}
+            <div className="cs-browser-mockup-frame">
+              <div className="cs-browser-header-bar">
+                <span className="cs-dot red" />
+                <span className="cs-dot yellow" />
+                <span className="cs-dot green" />
+                <span className="cs-browser-url-bar">https://{domainDisplay}</span>
+              </div>
+              <div className="cs-browser-content-wrap">
+                <img src={screenshots[activeImgIdx] || project.image} alt={`${project.title} Main Preview`} />
+              </div>
+            </div>
 
-        <div className="case-study-grid-content">
-          <div className="case-study-main-col">
-            <section className="case-study-section">
-              <h2>Overview</h2>
-              <p>{project.overview || project.description}</p>
-            </section>
+            {/* Numbered Narrative Steps 01 - 04 */}
+            <div className="cs-narrative-steps-list">
+              {narrativeSteps.map((step) => (
+                <article key={step.num} className="cs-narrative-step-item">
+                  <span className="cs-step-number-badge">{step.num}</span>
+                  <div className="cs-step-body">
+                    <h3>{step.title}</h3>
+                    <p>{step.content}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
 
-            <section className="case-study-section">
-              <h2>The Challenge</h2>
-              <p>
-                {project.challenge ||
-                  "The client needed a mobile-optimized storefront that built instant buyer trust, loaded fast on local networks, and streamlined the order checkout process."}
-              </p>
-            </section>
-
-            <section className="case-study-section">
-              <h2>Our Approach</h2>
-              <p>
-                {project.approach ||
-                  "We structured a clean hierarchy, designed a mobile-first catalog, integrated native bKash/COD payment options, and eliminated friction steps during order entry."}
-              </p>
-            </section>
-
-            <section className="case-study-section">
-              <h2>Design Direction</h2>
-              <p>
-                {project.designDirection ||
-                  "Clean typography, comfortable spacing, high-contrast action buttons, and purposeful product imagery."}
-              </p>
-            </section>
-
+            {/* Tech Stack Badges */}
             {technologiesList.length > 0 && (
-              <section className="case-study-section">
-                <h2>Technologies Used</h2>
-                <div className="case-study-tech-badges">
+              <div className="cs-tech-stack-section">
+                <h3>Technologies Used</h3>
+                <div className="cs-tech-badges-grid">
                   {technologiesList.map((tech, idx) => (
-                    <span key={idx} className="case-study-tech-badge">
-                      <Code2 size={14} style={{ marginRight: 6 }} />
-                      {tech}
+                    <span key={idx} className="cs-tech-pill">
+                      <Code2 size={15} /> {tech}
                     </span>
                   ))}
                 </div>
-              </section>
-            )}
-
-            {galleryList.length > 0 && (
-              <section className="case-study-section">
-                <h2>Project Gallery & Screenshots</h2>
-                <div className="case-study-gallery-grid">
-                  {galleryList.map((imgUrl, idx) => (
-                    <div key={idx} className="case-study-gallery-item">
-                      <img src={imgUrl} alt={`${project.title} Screenshot ${idx + 1}`} loading="lazy" />
-                    </div>
-                  ))}
-                </div>
-              </section>
+              </div>
             )}
           </div>
 
-          <aside className="case-study-sidebar">
+          {/* Right Column: Sticky Sidebar Cards */}
+          <aside className="cs-sidebar-column">
+            {/* Card 1: Key Features */}
             {keyFeaturesList.length > 0 && (
-              <div className="sidebar-box">
-                <h3>Key Features</h3>
-                <ul>
+              <div className="cs-sidebar-card">
+                <div className="cs-card-header-row">
+                  <span className="cs-card-icon-badge color-orange">
+                    <Star size={18} />
+                  </span>
+                  <h3>Key Features</h3>
+                </div>
+                <ul className="cs-checklist">
                   {keyFeaturesList.map((feat, i) => (
-                    <li key={i}><Check size={16} /> {feat}</li>
+                    <li key={i}>
+                      <span className="cs-check-icon">✓</span>
+                      <span>{feat}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
             )}
 
+            {/* Card 2: Results */}
             {resultsList.length > 0 && (
-              <div className="sidebar-box">
-                <h3>Results</h3>
-                <ul>
+              <div className="cs-sidebar-card">
+                <div className="cs-card-header-row">
+                  <span className="cs-card-icon-badge color-orange">
+                    <TrendingUp size={18} />
+                  </span>
+                  <h3>Results</h3>
+                </div>
+                <ul className="cs-checklist">
                   {resultsList.map((res, i) => (
-                    <li key={i}><Check size={16} /> {res}</li>
+                    <li key={i}>
+                      <span className="cs-check-icon">✓</span>
+                      <span>{res}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            {project.href && (
-              <a
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-                className="button button-primary full-width-btn"
-              >
-                Visit Live Website ↗
-              </a>
-            )}
+            {/* Card 3: Rocket Callout Banner */}
+            <div className="cs-rocket-callout-card">
+              <div className="cs-rocket-header-row">
+                <span className="cs-rocket-icon-badge">
+                  <Rocket size={20} />
+                </span>
+              </div>
+              <h3>Have a project in mind?</h3>
+              <p>Let's build something amazing together.</p>
+              <LocalLink to="/contact" navigate={navigate} className="cs-rocket-cta-btn">
+                Start a Project <ArrowRight size={16} />
+              </LocalLink>
+            </div>
           </aside>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

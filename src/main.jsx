@@ -1383,6 +1383,14 @@ function TestimonialSection() {
   );
 }
 
+function parseListField(val, fallback = []) {
+  if (Array.isArray(val)) return val.filter(Boolean);
+  if (typeof val === "string" && val.trim()) {
+    return val.split(/[\n,]/).map((s) => s.trim()).filter(Boolean);
+  }
+  return fallback;
+}
+
 // Section 13: Case Study Experience Page
 function CaseStudyPage({ slug, navigate }) {
   const { projects, isLoading } = useSiteContent();
@@ -1410,6 +1418,23 @@ function CaseStudyPage({ slug, navigate }) {
 
   const statusClass = project.status === "LIVE" ? "status-live" : "status-concept";
 
+  const keyFeaturesList = parseListField(project.keyFeatures, [
+    "Mobile-first responsive storefront",
+    "Direct Cash on Delivery & bKash checkout",
+    "Fast loading times",
+    "Clear product hierarchy",
+  ]);
+
+  const resultsList = parseListField(project.results, [
+    "Better product presentation",
+    "Improved mobile experience",
+    "Clearer navigation",
+    "Stronger visual hierarchy",
+  ]);
+
+  const technologiesList = parseListField(project.technologies, []);
+  const galleryList = parseListField(project.gallery, []);
+
   return (
     <div className="case-study-page">
       <div className="container">
@@ -1424,14 +1449,16 @@ function CaseStudyPage({ slug, navigate }) {
           <h1 className="case-study-title">{project.title}</h1>
           <p className="case-study-lead">{project.description}</p>
 
-          <a
-            href={project.href}
-            target="_blank"
-            rel="noreferrer"
-            className="button button-primary case-study-live-btn"
-          >
-            Visit Live Website <ArrowUpRight size={17} />
-          </a>
+          {project.href && (
+            <a
+              href={project.href}
+              target="_blank"
+              rel="noreferrer"
+              className="button button-primary case-study-live-btn"
+            >
+              Visit Live Website <ArrowUpRight size={17} />
+            </a>
+          )}
         </div>
 
         <div className="case-study-hero-image">
@@ -1468,43 +1495,68 @@ function CaseStudyPage({ slug, navigate }) {
                   "Clean typography, comfortable spacing, high-contrast action buttons, and purposeful product imagery."}
               </p>
             </section>
+
+            {technologiesList.length > 0 && (
+              <section className="case-study-section">
+                <h2>Technologies Used</h2>
+                <div className="case-study-tech-badges">
+                  {technologiesList.map((tech, idx) => (
+                    <span key={idx} className="case-study-tech-badge">
+                      <Code2 size={14} style={{ marginRight: 6 }} />
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {galleryList.length > 0 && (
+              <section className="case-study-section">
+                <h2>Project Gallery & Screenshots</h2>
+                <div className="case-study-gallery-grid">
+                  {galleryList.map((imgUrl, idx) => (
+                    <div key={idx} className="case-study-gallery-item">
+                      <img src={imgUrl} alt={`${project.title} Screenshot ${idx + 1}`} loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           <aside className="case-study-sidebar">
-            <div className="sidebar-box">
-              <h3>Key Features</h3>
-              <ul>
-                {(
-                  project.keyFeatures || [
-                    "Mobile-first responsive storefront",
-                    "Direct Cash on Delivery & bKash checkout",
-                    "Fast loading times",
-                    "Clear product hierarchy",
-                  ]
-                ).map((feat, i) => (
-                  <li key={i}><Check size={16} /> {feat}</li>
-                ))}
-              </ul>
-            </div>
+            {keyFeaturesList.length > 0 && (
+              <div className="sidebar-box">
+                <h3>Key Features</h3>
+                <ul>
+                  {keyFeaturesList.map((feat, i) => (
+                    <li key={i}><Check size={16} /> {feat}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-            <div className="sidebar-box">
-              <h3>Results</h3>
-              <ul>
-                <li>Better product presentation</li>
-                <li>Improved mobile experience</li>
-                <li>Clearer navigation</li>
-                <li>Stronger visual hierarchy</li>
-              </ul>
-            </div>
+            {resultsList.length > 0 && (
+              <div className="sidebar-box">
+                <h3>Results</h3>
+                <ul>
+                  {resultsList.map((res, i) => (
+                    <li key={i}><Check size={16} /> {res}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-            <a
-              href={project.href}
-              target="_blank"
-              rel="noreferrer"
-              className="button button-primary full-width-btn"
-            >
-              Visit Live Website ↗
-            </a>
+            {project.href && (
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noreferrer"
+                className="button button-primary full-width-btn"
+              >
+                Visit Live Website ↗
+              </a>
+            )}
           </aside>
         </div>
       </div>

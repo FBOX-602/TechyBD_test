@@ -49,18 +49,67 @@ const resources = {
     singular: "project",
     endpoint: "projects",
     icon: "projects",
-    description: "Your public portfolio and case-study links.",
-    columns: ["title", "category", "price", "href"],
-    fields: [
-      { name: "title", label: "Project name", required: true, placeholder: "e.g. Noor Skincare" },
-      { name: "category", label: "Category", type: "select", options: categories, required: true },
-      { name: "price", label: "Price (Optional)", placeholder: "e.g. ৳ 5,000 (leave blank for no price)" },
-      { name: "image", label: "Cover image or short video", type: "file", placeholder: "Upload file or paste URL" },
-      { name: "href", label: "Live website URL", type: "url", placeholder: "https://example.com" },
-      { name: "description", label: "Short description", type: "textarea", required: true, rows: 4, placeholder: "What did Techy BD build for this client?" },
+    description: "Your public portfolio and full case-study details.",
+    columns: ["title", "category", "status", "price", "href"],
+    sections: [
+      { id: "basic", label: "📌 Basic Info" },
+      { id: "media", label: "🖼️ Media & Gallery" },
+      { id: "casestudy", label: "📝 Case Study Narrative" },
+      { id: "tech", label: "🚀 Features & Tech" },
+      { id: "flags", label: "⚙️ Flags & Status" },
     ],
-    template: { title: "", category: "eCommerce", price: "", image: "", href: "", description: "" },
-    help: "Upload an image or short video, or paste a URL. Price is optional — leave empty to hide the price badge.",
+    fields: [
+      // Section 1: Basic Info
+      { section: "basic", name: "title", label: "Project Title", required: true, placeholder: "e.g. Furnish — Modern eCommerce" },
+      { section: "basic", name: "slug", label: "URL Slug / ID", required: true, placeholder: "e.g. furnish", hint: "Used for project details route: /work/furnish" },
+      { section: "basic", name: "category", label: "Category", type: "select", options: categories, required: true },
+      { section: "basic", name: "status", label: "Status Badge", type: "select", options: ["LIVE", "CONCEPT", "COMPLETED", "IN PROGRESS"], required: true },
+      { section: "basic", name: "price", label: "Price Badge (Optional)", placeholder: "e.g. ৳ 15,000 (leave blank to hide)" },
+      { section: "basic", name: "href", label: "Live Website URL", type: "url", placeholder: "https://furnishbd.com" },
+      { section: "basic", name: "description", label: "Short Description / Card Lead Copy", type: "textarea", required: true, rows: 3, placeholder: "Brief summary displayed on project showcase cards." },
+
+      // Section 2: Media & Gallery
+      { section: "media", name: "image", label: "Primary Cover Thumbnail", type: "file", required: true, placeholder: "Upload main project cover image" },
+      { section: "media", name: "mobileImage", label: "Mobile Mockup Image (Optional)", type: "file", placeholder: "Upload mobile screen mockup" },
+      { section: "media", name: "gallery", label: "Multiple Project Screenshots / Gallery", type: "gallery", placeholder: "Upload multiple screenshots" },
+
+      // Section 3: Case Study Narrative
+      { section: "casestudy", name: "overview", label: "Overview Narrative", type: "textarea", rows: 4, placeholder: "Detailed project background & overview..." },
+      { section: "casestudy", name: "challenge", label: "The Challenge", type: "textarea", rows: 4, placeholder: "What problems did the client face?" },
+      { section: "casestudy", name: "approach", label: "Our Approach", type: "textarea", rows: 4, placeholder: "How Techy BD structured the solution..." },
+      { section: "casestudy", name: "designDirection", label: "Design Direction", type: "textarea", rows: 3, placeholder: "Typography, color palette, UX decisions..." },
+
+      // Section 4: Features & Tech Stack
+      { section: "tech", name: "technologies", label: "Technologies Used (Tech Stack)", placeholder: "e.g. React, Vite, Supabase, Tailwind CSS, bKash API" },
+      { section: "tech", name: "keyFeatures", label: "Key Features (One per line or comma-separated)", type: "textarea", rows: 4, placeholder: "Mobile-first responsive storefront\nDirect Cash on Delivery & bKash checkout\nFast loading speed" },
+      { section: "tech", name: "results", label: "Project Results & Impact (One per line or comma-separated)", type: "textarea", rows: 4, placeholder: "Better product presentation\nImproved mobile experience\n300% order growth" },
+
+      // Section 5: Flags
+      { section: "flags", name: "isFeaturedSpotlight", label: "Featured Spotlight Card (#01 Showcase)", type: "select", options: ["No", "Yes"] },
+      { section: "flags", name: "published", label: "Published Status", type: "select", options: ["Published", "Draft"] },
+    ],
+    template: {
+      title: "",
+      slug: "",
+      category: "eCommerce",
+      status: "LIVE",
+      price: "",
+      href: "",
+      description: "",
+      image: "",
+      mobileImage: "",
+      gallery: [],
+      overview: "",
+      challenge: "",
+      approach: "",
+      designDirection: "",
+      technologies: "",
+      keyFeatures: "",
+      results: "",
+      isFeaturedSpotlight: "No",
+      published: "Published",
+    },
+    help: "Manage project details, cover thumbnail, mobile mockup, multi-screenshot gallery, tech stack, key features, and results for the Project Details page.",
   },
   services: {
     label: "Services",
@@ -605,9 +654,108 @@ function MediaUploadField({ field, value, onChange }) {
   );
 }
 
+function GalleryUploadField({ field, value, onChange }) {
+  const id = `admin-field-${field.name}`;
+  const fileInputRef = useRef(null);
+
+  const galleryList = useMemo(() => {
+    if (Array.isArray(value)) return value;
+    if (typeof value === "string" && value.trim()) {
+      return value.split(",").map((s) => s.trim()).filter(Boolean);
+    }
+    return [];
+  }, [value]);
+
+  const handleMultipleFiles = (files) => {
+    if (!files || files.length === 0) return;
+    const fileArray = Array.from(files);
+    let processed = 0;
+    const newImages = [...galleryList];
+
+    fileArray.forEach((file) => {
+      if (file.size > 25 * 1024 * 1024) {
+        alert(`File ${file.name} is too large (max 25MB).`);
+        return;
+      }
+      compressImageFile(file, 1200, 0.8, (result) => {
+        if (result) newImages.push(result);
+        processed++;
+        if (processed === fileArray.length) {
+          onChange(field.name, newImages);
+        }
+      });
+    });
+  };
+
+  const removeGalleryItem = (indexToRemove) => {
+    const updated = galleryList.filter((_, idx) => idx !== indexToRemove);
+    onChange(field.name, updated);
+  };
+
+  return (
+    <div className="admin-field admin-field-wide">
+      <div className="admin-media-field-header">
+        <label htmlFor={id}>
+          <span>{field.label} ({galleryList.length} screenshots uploaded)</span>
+        </label>
+      </div>
+
+      <div className="admin-gallery-uploader-box">
+        <input
+          id={id}
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          style={{ display: "none" }}
+          onChange={(e) => handleMultipleFiles(e.target.files)}
+        />
+
+        {galleryList.length > 0 && (
+          <div className="admin-gallery-preview-grid">
+            {galleryList.map((imgUrl, idx) => (
+              <div key={idx} className="admin-gallery-thumb-item">
+                <img src={imgUrl} alt={`Screenshot ${idx + 1}`} />
+                <button
+                  type="button"
+                  className="admin-gallery-remove-btn"
+                  onClick={() => removeGalleryItem(idx)}
+                  title="Remove image"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div
+          className="admin-dropzone-box"
+          style={{ padding: "1.25rem 1rem", marginTop: galleryList.length > 0 ? "0.75rem" : "0" }}
+          onClick={() => fileInputRef.current?.click()}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            handleMultipleFiles(e.dataTransfer.files);
+          }}
+        >
+          <span className="admin-dropzone-icon">
+            <Icon name="upload" size={26} />
+          </span>
+          <strong>Click or Drag & Drop Multiple Screenshots</strong>
+          <small>Select multiple image files at once to add to the project gallery</small>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function FormField({ field, value, onChange }) {
   if (field.type === "file") {
     return <MediaUploadField field={field} value={value} onChange={onChange} />;
+  }
+  if (field.type === "gallery") {
+    return <GalleryUploadField field={field} value={value} onChange={onChange} />;
   }
   const id = `admin-field-${field.name}`;
   const shared = { id, name: field.name, value: value ?? "", onChange: (event) => onChange(field.name, event.target.value), required: field.required, placeholder: field.placeholder, "aria-describedby": field.hint ? `${id}-hint` : undefined };
@@ -626,12 +774,14 @@ function Editor({ editor, draft, setDraft, busy, error, onClose, onSave }) {
   const [rawMode, setRawMode] = useState(false);
   const [raw, setRaw] = useState(() => JSON.stringify(draft, null, 2));
   const [rawError, setRawError] = useState("");
+  const [activeSection, setActiveSection] = useState("all");
   const firstField = useRef(null);
 
   useEffect(() => {
     setRawMode(false);
     setRaw(JSON.stringify(draft, null, 2));
     setRawError("");
+    setActiveSection("all");
   }, [editor]);
 
   useEffect(() => {
@@ -649,6 +799,7 @@ function Editor({ editor, draft, setDraft, busy, error, onClose, onSave }) {
     setRawError("");
     setRawMode((value) => !value);
   };
+
   const save = (event) => {
     event.preventDefault();
     let nextDraft = draft;
@@ -665,17 +816,84 @@ function Editor({ editor, draft, setDraft, busy, error, onClose, onSave }) {
     onSave(nextDraft, item);
   };
 
+  const hasSections = Boolean(config?.sections && config.sections.length > 0);
+  const visibleFields = hasSections && activeSection !== "all"
+    ? config.fields.filter((f) => f.section === activeSection)
+    : config.fields;
+
   return (
     <div className="admin-editor-layer" role="presentation">
       <button className="admin-editor-backdrop" type="button" tabIndex={-1} onClick={!busy ? onClose : undefined} aria-label="Close editor" />
       <aside className="admin-editor" role="dialog" aria-modal="true" aria-labelledby="admin-editor-title">
-        <header className="admin-editor-header"><div><p className="admin-kicker">{item ? "EDIT CONTENT" : "NEW CONTENT"}</p><h2 id="admin-editor-title">{item ? "Edit" : "Add"} {config.singular}</h2></div><button type="button" className="admin-icon-button" onClick={onClose} disabled={busy} aria-label="Close editor"><Icon name="close" /></button></header>
-        <div className="admin-editor-help"><Icon name="info" size={17} /><p>{config.help}</p></div>
+        <header className="admin-editor-header">
+          <div>
+            <p className="admin-kicker">{item ? "EDIT CONTENT" : "NEW CONTENT"}</p>
+            <h2 id="admin-editor-title">{item ? "Edit" : "Add"} {config.singular}</h2>
+          </div>
+          <button type="button" className="admin-icon-button" onClick={onClose} disabled={busy} aria-label="Close editor">
+            <Icon name="close" />
+          </button>
+        </header>
+        <div className="admin-editor-help">
+          <Icon name="info" size={17} />
+          <p>{config.help}</p>
+        </div>
         <form className="admin-editor-form" onSubmit={save}>
-          <div className="admin-editor-mode"><button type="button" className={!rawMode ? "active" : ""} onClick={() => rawMode && switchEditor()}>Guided fields</button><button type="button" className={rawMode ? "active" : ""} onClick={() => !rawMode && switchEditor()}><Icon name="code" size={15} />Advanced JSON</button></div>
-          {!rawMode ? <div className="admin-field-grid">{config.fields.map((field, index) => <div key={field.name} ref={index === 0 ? firstField : undefined}><FormField field={field} value={draft[field.name]} onChange={setValue} /></div>)}</div> : <div className="admin-json-editor"><label htmlFor="admin-json">Edit this {config.singular} as JSON</label><textarea id="admin-json" spellCheck="false" value={raw} onChange={(event) => setRaw(event.target.value)} rows={19} aria-invalid={Boolean(rawError)} /><p>Keep the field names shown in the template. System fields such as id are ignored when you save.</p>{rawError && <span role="alert">{rawError}</span>}</div>}
+          <div className="admin-editor-mode">
+            <button type="button" className={!rawMode ? "active" : ""} onClick={() => rawMode && switchEditor()}>Guided fields</button>
+            <button type="button" className={rawMode ? "active" : ""} onClick={() => !rawMode && switchEditor()}><Icon name="code" size={15} />Advanced JSON</button>
+          </div>
+
+          {!rawMode ? (
+            <>
+              {hasSections && (
+                <div className="admin-editor-section-tabs" role="tablist" aria-label="Form section tabs">
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeSection === "all"}
+                    className={`admin-section-tab-btn ${activeSection === "all" ? "active" : ""}`}
+                    onClick={() => setActiveSection("all")}
+                  >
+                    📋 View All Sections
+                  </button>
+                  {config.sections.map((sec) => (
+                    <button
+                      key={sec.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={activeSection === sec.id}
+                      className={`admin-section-tab-btn ${activeSection === sec.id ? "active" : ""}`}
+                      onClick={() => setActiveSection(sec.id)}
+                    >
+                      {sec.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="admin-field-grid">
+                {visibleFields.map((field, index) => (
+                  <div key={field.name} ref={index === 0 ? firstField : undefined}>
+                    <FormField field={field} value={draft[field.name]} onChange={setValue} />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="admin-json-editor">
+              <label htmlFor="admin-json">Edit this {config.singular} as JSON</label>
+              <textarea id="admin-json" spellCheck="false" value={raw} onChange={(event) => setRaw(event.target.value)} rows={19} aria-invalid={Boolean(rawError)} />
+              <p>Keep the field names shown in the template. System fields such as id are ignored when you save.</p>
+              {rawError && <span role="alert">{rawError}</span>}
+            </div>
+          )}
+
           {error && <p className="admin-form-error" role="alert"><Icon name="alert" size={17} />{error}</p>}
-          <footer className="admin-editor-footer"><button type="button" className="admin-button admin-button-quiet" disabled={busy} onClick={onClose}>Cancel</button><button type="submit" className="admin-button admin-button-primary" disabled={busy}>{busy ? "Saving…" : "Save changes"}<Icon name="save" size={17} /></button></footer>
+          <footer className="admin-editor-footer">
+            <button type="button" className="admin-button admin-button-quiet" disabled={busy} onClick={onClose}>Cancel</button>
+            <button type="submit" className="admin-button admin-button-primary" disabled={busy}>{busy ? "Saving…" : "Save changes"}<Icon name="save" size={17} /></button>
+          </footer>
         </form>
       </aside>
     </div>

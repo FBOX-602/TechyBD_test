@@ -108,10 +108,13 @@ function normalizeContent(payload) {
 
 export function ContentProvider({ children }) {
   const [content, setContent] = useState(() => normalizeContent(null));
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(null);
 
   const reloadContent = useCallback(() => {
-    // Instantly update from local storage first for 0ms delay
-    setContent(normalizeContent(null));
+    setIsFetching(true);
+    setError(null);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 25000);
@@ -125,11 +128,19 @@ export function ContentProvider({ children }) {
         if (!response.ok) throw new Error(`Content request failed (${response.status})`);
         return response.json();
       })
-      .then((payload) => setContent(normalizeContent(payload)))
-      .catch((error) => {
+      .then((payload) => {
+        setContent(normalizeContent(payload));
+        setIsLoading(false);
+        setIsFetching(false);
+        setError(null);
+      })
+      .catch((err) => {
         clearTimeout(timeoutId);
-        if (error.name !== "AbortError") {
+        setIsLoading(false);
+        setIsFetching(false);
+        if (err.name !== "AbortError") {
           console.info("Using local content fallback until the CMS API is configured.");
+          setError(err.message || "Unable to fetch latest content");
         }
       });
   }, []);
@@ -143,10 +154,20 @@ export function ContentProvider({ children }) {
     };
   }, [reloadContent]);
 
-  const value = useMemo(() => content, [content]);
+  const value = useMemo(
+    () => ({
+      ...content,
+      isLoading,
+      isFetching,
+      error,
+      reloadContent,
+    }),
+    [content, isLoading, isFetching, error, reloadContent]
+  );
+
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }
 
 export function useSiteContent() {
-  return useContext(ContentContext) || fallbackContent;
+  return useContext(ContentContext) || { ...fallbackContent, isLoading: false, isFetching: false, error: null, reloadContent: () => {} };
 }

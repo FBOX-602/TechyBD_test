@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { createRoot } from "react-dom/client";
 import {
   Activity,
+  AlertCircle,
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
@@ -30,6 +31,7 @@ import {
   PenTool,
   PieChart,
   Quote,
+  RefreshCw,
   Rocket,
   Send,
   Settings,
@@ -87,6 +89,76 @@ function BrandedProgressLoader({ active }) {
   return (
     <div className={`top-branded-progress-loader ${active ? "is-active" : ""}`} aria-hidden="true">
       <div className="top-progress-glow-bar" />
+    </div>
+  );
+}
+
+function SpotlightSkeleton() {
+  return (
+    <div className="featured-spotlight-card skeleton-card-wrap" aria-hidden="true">
+      <div className="spotlight-left-content">
+        <div className="skeleton-box" style={{ width: "35%", height: "1.2rem", marginBottom: "1rem" }} />
+        <div className="skeleton-box" style={{ width: "80%", height: "2.2rem", marginBottom: "1rem" }} />
+        <div className="skeleton-box" style={{ width: "100%", height: "1rem", marginBottom: "0.5rem" }} />
+        <div className="skeleton-box" style={{ width: "65%", height: "1rem", marginBottom: "1.5rem" }} />
+        <div style={{ display: "flex", gap: "0.5rem" }}>
+          <div className="skeleton-box" style={{ width: "70px", height: "26px", borderRadius: "999px" }} />
+          <div className="skeleton-box" style={{ width: "90px", height: "26px", borderRadius: "999px" }} />
+        </div>
+      </div>
+      <div className="spotlight-right-media">
+        <div className="skeleton-box" style={{ width: "100%", height: "280px", borderRadius: "1rem" }} />
+      </div>
+    </div>
+  );
+}
+
+function ProjectSkeletonGrid({ count = 3 }) {
+  return (
+    <div className="product-cards-grid" aria-hidden="true">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="product-card skeleton-project-card">
+          <div className="skeleton-box" style={{ width: "100%", height: "210px", borderRadius: "1rem 1rem 0 0" }} />
+          <div className="product-card-body" style={{ padding: "1.5rem" }}>
+            <div className="skeleton-box" style={{ width: "40%", height: "0.85rem", marginBottom: "0.75rem" }} />
+            <div className="skeleton-box" style={{ width: "85%", height: "1.3rem", marginBottom: "0.75rem" }} />
+            <div className="skeleton-box" style={{ width: "100%", height: "0.85rem", marginBottom: "0.5rem" }} />
+            <div className="skeleton-box" style={{ width: "60%", height: "0.85rem" }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ServiceSkeletonGrid({ count = 3 }) {
+  return (
+    <div className="services-editorial-grid" aria-hidden="true">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="service-card-editorial skeleton-service-card" style={{ padding: "2rem" }}>
+          <div className="skeleton-box" style={{ width: "48px", height: "48px", borderRadius: "12px", marginBottom: "1.25rem" }} />
+          <div className="skeleton-box" style={{ width: "60%", height: "1.3rem", marginBottom: "0.75rem" }} />
+          <div className="skeleton-box" style={{ width: "100%", height: "0.85rem", marginBottom: "0.5rem" }} />
+          <div className="skeleton-box" style={{ width: "80%", height: "0.85rem" }} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BrandedErrorCard({ message = "Unable to fetch content.", onRetry }) {
+  return (
+    <div className="branded-error-card">
+      <div className="branded-error-icon">
+        <AlertCircle size={28} style={{ color: "#FF6200" }} />
+      </div>
+      <h3 className="branded-error-title">Content Sync Notice</h3>
+      <p className="branded-error-message">{message}</p>
+      {onRetry && (
+        <button type="button" className="branded-retry-btn" onClick={onRetry}>
+          <RefreshCw size={15} style={{ marginRight: 6 }} /> Retry Loading
+        </button>
+      )}
     </div>
   );
 }
@@ -403,7 +475,7 @@ function ProjectCard({ project, navigate }) {
 // Section 5, 7, 8: Featured Work Section & Project Showcase (Same to Same as Reference Image)
 function FeaturedWork({ full = false, navigate }) {
   const [activeCategory, setActiveCategory] = useState("All");
-  const { projects: cmsProjects, settings } = useSiteContent();
+  const { projects: cmsProjects, settings, isLoading, error, reloadContent } = useSiteContent();
 
   const projects = Array.isArray(cmsProjects) ? cmsProjects : [];
 
@@ -475,71 +547,83 @@ function FeaturedWork({ full = false, navigate }) {
           </div>
         )}
 
-        {/* Featured Spotlight Showcase Card (#01 GreenMart eCommerce - Full Project Page only) */}
-        {full && (activeCategory === "All" || activeCategory === "eCommerce") && spotlightProject && (
-          <div className="featured-spotlight-card">
-            <div className="spotlight-left-content">
-              <div className="spotlight-number-row">
-                <span className="spotlight-num">{spotlightProject.number || "01"}</span>
-                <span className="spotlight-line" />
+        {/* Dynamic State Handling: Skeletons -> Error -> Content */}
+        {isLoading && projects.length === 0 ? (
+          <>
+            {full && <SpotlightSkeleton />}
+            <ProjectSkeletonGrid count={full ? 6 : 3} />
+          </>
+        ) : error && projects.length === 0 ? (
+          <BrandedErrorCard message={error} onRetry={reloadContent} />
+        ) : (
+          <>
+            {/* Featured Spotlight Showcase Card (#01 GreenMart eCommerce - Full Project Page only) */}
+            {full && (activeCategory === "All" || activeCategory === "eCommerce") && spotlightProject && (
+              <div className="featured-spotlight-card">
+                <div className="spotlight-left-content">
+                  <div className="spotlight-number-row">
+                    <span className="spotlight-num">{spotlightProject.number || "01"}</span>
+                    <span className="spotlight-line" />
+                  </div>
+
+                  <span className="spotlight-eyebrow">{spotlightProject.eyebrow || "FEATURED PROJECT"}</span>
+                  <h3 className="spotlight-title">{spotlightProject.title}</h3>
+                  <p className="spotlight-desc">{spotlightProject.description}</p>
+
+                  <div className="spotlight-tags-row">
+                    {(spotlightProject.tags || ["eCommerce", "Web Design", "Development", "UI/UX"]).map((tag, tIdx) => (
+                      <span key={tIdx} className={`spotlight-tag-pill ${tIdx === 0 ? "highlight" : ""}`}>
+                        {tIdx === 0 && <ShoppingBag size={13} style={{ marginRight: 4 }} />}
+                        {tIdx === 1 && <MonitorSmartphone size={13} style={{ marginRight: 4 }} />}
+                        {tIdx === 2 && <Code2 size={13} style={{ marginRight: 4 }} />}
+                        {tIdx === 3 && <Sparkles size={13} style={{ marginRight: 4 }} />}
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <a
+                    href={spotlightProject.href || `/contact`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="spotlight-cta-btn"
+                  >
+                    View Project →
+                  </a>
+                </div>
+
+                <div className="spotlight-right-media">
+                  <div className="device-desktop-mockup">
+                    <div className="browser-top-bar">
+                      <span className="dot red" />
+                      <span className="dot yellow" />
+                      <span className="dot green" />
+                      <span className="browser-url-pill">GreenMart</span>
+                    </div>
+                    <img src={spotlightProject.image} alt={spotlightProject.title} className="desktop-screen-img" />
+                  </div>
+                  {spotlightProject.mobileImage && (
+                    <div className="device-mobile-mockup">
+                      <img src={spotlightProject.mobileImage} alt="Mobile App View" className="mobile-screen-img" />
+                    </div>
+                  )}
+                </div>
               </div>
+            )}
 
-              <span className="spotlight-eyebrow">{spotlightProject.eyebrow || "FEATURED PROJECT"}</span>
-              <h3 className="spotlight-title">{spotlightProject.title}</h3>
-              <p className="spotlight-desc">{spotlightProject.description}</p>
-
-              <div className="spotlight-tags-row">
-                {(spotlightProject.tags || ["eCommerce", "Web Design", "Development", "UI/UX"]).map((tag, tIdx) => (
-                  <span key={tIdx} className={`spotlight-tag-pill ${tIdx === 0 ? "highlight" : ""}`}>
-                    {tIdx === 0 && <ShoppingBag size={13} style={{ marginRight: 4 }} />}
-                    {tIdx === 1 && <MonitorSmartphone size={13} style={{ marginRight: 4 }} />}
-                    {tIdx === 2 && <Code2 size={13} style={{ marginRight: 4 }} />}
-                    {tIdx === 3 && <Sparkles size={13} style={{ marginRight: 4 }} />}
-                    {tag}
-                  </span>
+            {/* Project Cards Grid */}
+            {gridProjects.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
+                <p>No projects under <strong>"{activeCategory}"</strong>. Select <strong>"All"</strong> to view all projects.</p>
+              </div>
+            ) : (
+              <div className="product-cards-grid">
+                {gridProjects.map((project) => (
+                  <ProjectCard key={project.slug || project.id} project={project} navigate={navigate} />
                 ))}
               </div>
-
-              <a
-                href={spotlightProject.href || `/contact`}
-                target="_blank"
-                rel="noreferrer"
-                className="spotlight-cta-btn"
-              >
-                View Project →
-              </a>
-            </div>
-
-            <div className="spotlight-right-media">
-              <div className="device-desktop-mockup">
-                <div className="browser-top-bar">
-                  <span className="dot red" />
-                  <span className="dot yellow" />
-                  <span className="dot green" />
-                  <span className="browser-url-pill">GreenMart</span>
-                </div>
-                <img src={spotlightProject.image} alt={spotlightProject.title} className="desktop-screen-img" />
-              </div>
-              {spotlightProject.mobileImage && (
-                <div className="device-mobile-mockup">
-                  <img src={spotlightProject.mobileImage} alt="Mobile App View" className="mobile-screen-img" />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Project Cards Grid */}
-        {gridProjects.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "3rem 1rem", color: "#64748b" }}>
-            <p>No projects under <strong>"{activeCategory}"</strong>. Select <strong>"All"</strong> to view all projects.</p>
-          </div>
-        ) : (
-          <div className="product-cards-grid">
-            {gridProjects.map((project) => (
-              <ProjectCard key={project.slug || project.id} project={project} navigate={navigate} />
-            ))}
-          </div>
+            )}
+          </>
         )}
 
         {/* "See More" Button on Home Page (when full === false) */}
@@ -617,7 +701,7 @@ function FeaturedWork({ full = false, navigate }) {
 
 // Section 9: Services Section ("Same to Same Design as Reference Image")
 function ServicesSection({ navigate, isHomePage = false }) {
-  const { services } = useSiteContent();
+  const { services, isLoading, error, reloadContent } = useSiteContent();
   const scrollRef = React.useRef(null);
 
   const defaultServicesList = [
@@ -1281,8 +1365,21 @@ function TestimonialSection() {
 
 // Section 13: Case Study Experience Page
 function CaseStudyPage({ slug, navigate }) {
-  const { projects } = useSiteContent();
+  const { projects, isLoading } = useSiteContent();
   const project = projects.find((p) => p.slug === slug || p.id === slug);
+
+  if (isLoading && !project) {
+    return (
+      <div className="case-study-page">
+        <div className="container" style={{ padding: "4rem 1rem" }}>
+          <div className="skeleton-box" style={{ width: "120px", height: "1.5rem", marginBottom: "2rem" }} />
+          <div className="skeleton-box" style={{ width: "65%", height: "3rem", marginBottom: "1rem" }} />
+          <div className="skeleton-box" style={{ width: "85%", height: "1.2rem", marginBottom: "2.5rem" }} />
+          <div className="skeleton-box" style={{ width: "100%", height: "420px", borderRadius: "1.5rem" }} />
+        </div>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -1962,18 +2059,18 @@ function ContactPage({ navigate }) {
 
 function App() {
   const { path, navigate, isNavigating } = useRoute();
-  const { settings } = useSiteContent();
+  const { settings, isLoading: cmsLoading } = useSiteContent();
   const route = path.replace(/\/$/, "") || "/";
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setInitialLoading(false);
-    }, 320);
+    }, 280);
     return () => clearTimeout(timer);
   }, []);
 
-  const isLoading = initialLoading || isNavigating;
+  const isLoading = initialLoading || isNavigating || cmsLoading;
 
   useEffect(() => {
     document.body.classList.toggle("public-site-body", route !== "/admin");

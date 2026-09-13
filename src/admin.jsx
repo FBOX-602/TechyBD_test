@@ -45,36 +45,39 @@ const serviceIcons = ["shopping-bag", "zap", "sparkles", "activity", "shield-che
 
 const resources = {
   projects: {
-    label: "Projects",
-    singular: "project",
+    label: "Projects & Products",
+    singular: "project / product",
     endpoint: "projects",
     icon: "projects",
-    description: "Your public portfolio and full case-study details.",
+    description: "Your public portfolio, product catalog, and full case-study details.",
     columns: ["title", "category", "status", "price", "href"],
     sections: [
-      { id: "basic", label: "📌 Basic Info" },
+      { id: "basic", label: "📌 Basic Info & Pricing" },
       { id: "media", label: "🖼️ Media & Gallery" },
       { id: "casestudy", label: "📝 Case Study Narrative" },
-      { id: "tech", label: "🚀 Features & Tech" },
+      { id: "tech", label: "🚀 Features, Tech & Variants" },
       { id: "flags", label: "⚙️ Flags & Status" },
     ],
     fields: [
       // Section 1: Basic Info
-      { section: "basic", name: "title", label: "Project Title", required: true, placeholder: "e.g. Furnish — Modern eCommerce" },
-      { section: "basic", name: "slug", label: "URL Slug / ID", required: true, placeholder: "e.g. furnish", hint: "Used for project details route: /work/furnish" },
+      { section: "basic", name: "title", label: "Project / Product Title", required: true, placeholder: "e.g. Furnish — Modern eCommerce" },
+      { section: "basic", name: "slug", label: "URL Slug / ID / SKU", required: true, placeholder: "e.g. furnish", hint: "Used for project details route: /work/furnish" },
       { section: "basic", name: "category", label: "Category", type: "select", options: categories, required: true },
-      { section: "basic", name: "status", label: "Status Badge", type: "select", options: ["LIVE", "CONCEPT", "COMPLETED", "IN PROGRESS"], required: true },
-      { section: "basic", name: "price", label: "Price Badge (Optional)", placeholder: "e.g. ৳ 15,000 (leave blank to hide)" },
-      { section: "basic", name: "href", label: "Live Website URL", type: "url", placeholder: "https://furnishbd.com" },
-      { section: "basic", name: "description", label: "Short Description / Card Lead Copy", type: "textarea", required: true, rows: 3, placeholder: "Brief summary displayed on project showcase cards." },
+      { section: "basic", name: "status", label: "Status Badge", type: "select", options: ["LIVE", "CONCEPT", "COMPLETED", "IN PROGRESS", "IN STOCK", "OUT OF STOCK"], required: true },
+      { section: "basic", name: "price", label: "Price / Current Price (Optional)", placeholder: "e.g. ৳ 15,000 (leave blank to hide)" },
+      { section: "basic", name: "wasPrice", label: "Discount / Was Price (Optional)", placeholder: "e.g. ৳ 18,000" },
+      { section: "basic", name: "sku", label: "SKU / Code (Optional)", placeholder: "e.g. PROD-FURNISH-01" },
+      { section: "basic", name: "stock", label: "Stock / Availability (Optional)", placeholder: "e.g. In Stock (10 units)" },
+      { section: "basic", name: "href", label: "Live Website / Demo URL", type: "url", placeholder: "https://furnishbd.com" },
+      { section: "basic", name: "description", label: "Short Description / Card Lead Copy", type: "textarea", required: true, rows: 3, placeholder: "Brief summary displayed on project/product cards." },
 
       // Section 2: Media & Gallery
-      { section: "media", name: "image", label: "Primary Cover Thumbnail", type: "file", required: true, placeholder: "Upload main project cover image" },
-      { section: "media", name: "mobileImage", label: "Mobile Mockup Image (Optional)", type: "file", placeholder: "Upload mobile screen mockup" },
-      { section: "media", name: "gallery", label: "Multiple Project Screenshots / Gallery", type: "gallery", placeholder: "Upload multiple screenshots" },
+      { section: "media", name: "image", label: "Primary Cover / Product Image", type: "file", required: true, placeholder: "Upload main cover or product image" },
+      { section: "media", name: "mobileImage", label: "Mobile Mockup / Secondary Image (Optional)", type: "file", placeholder: "Upload mobile screen mockup or secondary image" },
+      { section: "media", name: "gallery", label: "Additional Images / Screenshot Gallery", type: "gallery", placeholder: "Upload multiple screenshots/images" },
 
       // Section 3: Case Study Narrative
-      { section: "casestudy", name: "overview", label: "Overview Narrative", type: "textarea", rows: 4, placeholder: "Detailed project background & overview..." },
+      { section: "casestudy", name: "overview", label: "Overview / Product Full Description", type: "textarea", rows: 4, placeholder: "Detailed project background & overview..." },
       { section: "casestudy", name: "challenge", label: "The Challenge", type: "textarea", rows: 4, placeholder: "What problems did the client face?" },
       { section: "casestudy", name: "approach", label: "Our Approach", type: "textarea", rows: 4, placeholder: "How Techy BD structured the solution..." },
       { section: "casestudy", name: "designDirection", label: "Design Direction", type: "textarea", rows: 3, placeholder: "Typography, color palette, UX decisions..." },
@@ -83,6 +86,7 @@ const resources = {
       { section: "tech", name: "technologies", label: "Technologies Used (Tech Stack)", placeholder: "e.g. React, Vite, Supabase, Tailwind CSS, bKash API" },
       { section: "tech", name: "keyFeatures", label: "Key Features (One per line or comma-separated)", type: "textarea", rows: 4, placeholder: "Mobile-first responsive storefront\nDirect Cash on Delivery & bKash checkout\nFast loading speed" },
       { section: "tech", name: "results", label: "Project Results & Impact (One per line or comma-separated)", type: "textarea", rows: 4, placeholder: "Better product presentation\nImproved mobile experience\n300% order growth" },
+      { section: "tech", name: "variants", label: "Variants / Additional Details (Optional)", type: "textarea", rows: 3, placeholder: "e.g. Standard License, Extended License, Multi-store package" },
 
       // Section 5: Flags
       { section: "flags", name: "isFeaturedSpotlight", label: "Featured Spotlight Card (#01 Showcase)", type: "select", options: ["No", "Yes"] },
@@ -94,6 +98,9 @@ const resources = {
       category: "eCommerce",
       status: "LIVE",
       price: "",
+      wasPrice: "",
+      sku: "",
+      stock: "",
       href: "",
       description: "",
       image: "",
@@ -106,10 +113,11 @@ const resources = {
       technologies: "",
       keyFeatures: "",
       results: "",
+      variants: "",
       isFeaturedSpotlight: "No",
       published: "Published",
     },
-    help: "Manage project details, cover thumbnail, mobile mockup, multi-screenshot gallery, tech stack, key features, and results for the Project Details page.",
+    help: "Manage project & product details, pricing, cover image, mobile mockup, screenshot gallery, tech stack, key features, and results for the details page.",
   },
   services: {
     label: "Services",
@@ -817,85 +825,110 @@ function Editor({ editor, draft, setDraft, busy, error, onClose, onSave }) {
   };
 
   const hasSections = Boolean(config?.sections && config.sections.length > 0);
-  const visibleFields = hasSections && activeSection !== "all"
-    ? config.fields.filter((f) => f.section === activeSection)
-    : config.fields;
 
   return (
-    <div className="admin-editor-layer" role="presentation">
-      <button className="admin-editor-backdrop" type="button" tabIndex={-1} onClick={!busy ? onClose : undefined} aria-label="Close editor" />
-      <aside className="admin-editor" role="dialog" aria-modal="true" aria-labelledby="admin-editor-title">
-        <header className="admin-editor-header">
-          <div>
-            <p className="admin-kicker">{item ? "EDIT CONTENT" : "NEW CONTENT"}</p>
-            <h2 id="admin-editor-title">{item ? "Edit" : "Add"} {config.singular}</h2>
-          </div>
-          <button type="button" className="admin-icon-button" onClick={onClose} disabled={busy} aria-label="Close editor">
-            <Icon name="close" />
+    <div className="admin-fullpage-editor" role="region" aria-label={`Edit ${config.label}`}>
+      <header className="admin-fullpage-editor-header">
+        <div className="admin-fullpage-header-left">
+          <button type="button" className="admin-back-btn" onClick={onClose} disabled={busy}>
+            ← Back to {config.label}
           </button>
-        </header>
-        <div className="admin-editor-help">
-          <Icon name="info" size={17} />
-          <p>{config.help}</p>
+          <h1>{item ? `Edit ${config.singular}: ${item.title || item.name || ""}` : `Add New ${config.singular}`}</h1>
         </div>
-        <form className="admin-editor-form" onSubmit={save}>
-          <div className="admin-editor-mode">
-            <button type="button" className={!rawMode ? "active" : ""} onClick={() => rawMode && switchEditor()}>Guided fields</button>
-            <button type="button" className={rawMode ? "active" : ""} onClick={() => !rawMode && switchEditor()}><Icon name="code" size={15} />Advanced JSON</button>
-          </div>
+        <div className="admin-fullpage-header-right">
+          <button type="button" className="admin-button admin-button-quiet" disabled={busy} onClick={onClose}>
+            Cancel
+          </button>
+          <button type="button" className="admin-button admin-button-primary" disabled={busy} onClick={save}>
+            {busy ? "Saving…" : "Save Changes"} <Icon name="save" size={17} />
+          </button>
+        </div>
+      </header>
 
-          {!rawMode ? (
-            <>
-              {hasSections && (
-                <div className="admin-editor-section-tabs" role="tablist" aria-label="Form section tabs">
+      <div className="admin-editor-help">
+        <Icon name="info" size={17} />
+        <p>{config.help}</p>
+      </div>
+
+      <form className="admin-fullpage-editor-form" onSubmit={save}>
+        <div className="admin-editor-mode">
+          <button type="button" className={!rawMode ? "active" : ""} onClick={() => rawMode && switchEditor()}>Guided fields</button>
+          <button type="button" className={rawMode ? "active" : ""} onClick={() => !rawMode && switchEditor()}><Icon name="code" size={15} />Advanced JSON</button>
+        </div>
+
+        {!rawMode ? (
+          <>
+            {hasSections && (
+              <div className="admin-editor-section-tabs" role="tablist" aria-label="Form section tabs">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={activeSection === "all"}
+                  className={`admin-section-tab-btn ${activeSection === "all" ? "active" : ""}`}
+                  onClick={() => setActiveSection("all")}
+                >
+                  📋 View All Sections
+                </button>
+                {config.sections.map((sec) => (
                   <button
+                    key={sec.id}
                     type="button"
                     role="tab"
-                    aria-selected={activeSection === "all"}
-                    className={`admin-section-tab-btn ${activeSection === "all" ? "active" : ""}`}
-                    onClick={() => setActiveSection("all")}
+                    aria-selected={activeSection === sec.id}
+                    className={`admin-section-tab-btn ${activeSection === sec.id ? "active" : ""}`}
+                    onClick={() => setActiveSection(sec.id)}
                   >
-                    📋 View All Sections
+                    {sec.label}
                   </button>
-                  {config.sections.map((sec) => (
-                    <button
-                      key={sec.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={activeSection === sec.id}
-                      className={`admin-section-tab-btn ${activeSection === sec.id ? "active" : ""}`}
-                      onClick={() => setActiveSection(sec.id)}
-                    >
-                      {sec.label}
-                    </button>
-                  ))}
-                </div>
-              )}
+                ))}
+              </div>
+            )}
 
+            {hasSections ? (
+              <div className="admin-editor-sections-container">
+                {config.sections
+                  .filter((sec) => activeSection === "all" || activeSection === sec.id)
+                  .map((sec) => {
+                    const secFields = config.fields.filter((f) => f.section === sec.id);
+                    return (
+                      <fieldset key={sec.id} className="admin-editor-section-card">
+                        <legend className="admin-editor-section-title">{sec.label}</legend>
+                        <div className="admin-field-grid">
+                          {secFields.map((field, index) => (
+                            <div key={field.name} ref={index === 0 ? firstField : undefined}>
+                              <FormField field={field} value={draft[field.name]} onChange={setValue} />
+                            </div>
+                          ))}
+                        </div>
+                      </fieldset>
+                    );
+                  })}
+              </div>
+            ) : (
               <div className="admin-field-grid">
-                {visibleFields.map((field, index) => (
+                {config.fields.map((field, index) => (
                   <div key={field.name} ref={index === 0 ? firstField : undefined}>
                     <FormField field={field} value={draft[field.name]} onChange={setValue} />
                   </div>
                 ))}
               </div>
-            </>
-          ) : (
-            <div className="admin-json-editor">
-              <label htmlFor="admin-json">Edit this {config.singular} as JSON</label>
-              <textarea id="admin-json" spellCheck="false" value={raw} onChange={(event) => setRaw(event.target.value)} rows={19} aria-invalid={Boolean(rawError)} />
-              <p>Keep the field names shown in the template. System fields such as id are ignored when you save.</p>
-              {rawError && <span role="alert">{rawError}</span>}
-            </div>
-          )}
+            )}
+          </>
+        ) : (
+          <div className="admin-json-editor">
+            <label htmlFor="admin-json">Edit this {config.singular} as JSON</label>
+            <textarea id="admin-json" spellCheck="false" value={raw} onChange={(event) => setRaw(event.target.value)} rows={22} aria-invalid={Boolean(rawError)} />
+            <p>Keep the field names shown in the template. System fields such as id are ignored when you save.</p>
+            {rawError && <span role="alert">{rawError}</span>}
+          </div>
+        )}
 
-          {error && <p className="admin-form-error" role="alert"><Icon name="alert" size={17} />{error}</p>}
-          <footer className="admin-editor-footer">
-            <button type="button" className="admin-button admin-button-quiet" disabled={busy} onClick={onClose}>Cancel</button>
-            <button type="submit" className="admin-button admin-button-primary" disabled={busy}>{busy ? "Saving…" : "Save changes"}<Icon name="save" size={17} /></button>
-          </footer>
-        </form>
-      </aside>
+        {error && <p className="admin-form-error" role="alert"><Icon name="alert" size={17} />{error}</p>}
+        <footer className="admin-editor-footer">
+          <button type="button" className="admin-button admin-button-quiet" disabled={busy} onClick={onClose}>Cancel</button>
+          <button type="submit" className="admin-button admin-button-primary" disabled={busy}>{busy ? "Saving…" : "Save Changes"}<Icon name="save" size={17} /></button>
+        </footer>
+      </form>
     </div>
   );
 }
@@ -1171,10 +1204,15 @@ function AdminApp() {
         </header>
         <div className="admin-content">
           {error && !editor && <div className="admin-request-error" role="alert"><Icon name="alert" size={18} /><span><strong>Could not complete that request.</strong>{error}</span><button type="button" onClick={() => loadView(activeView)}>Try again</button></div>}
-          {activeView === "dashboard" ? <Dashboard counts={counts} loading={loading} onNavigate={navigate} recent={latestRecord} /> : <ResourceTable resourceKey={activeView} records={records} loading={loading} search={search} onSearch={setSearch} onEdit={openEditor} onDelete={deleteItem} onAdd={() => openEditor()} busy={actionBusy} />}
+          {activeView === "dashboard" ? (
+            <Dashboard counts={counts} loading={loading} onNavigate={navigate} recent={latestRecord} />
+          ) : editor ? (
+            <Editor editor={editor} draft={draft} setDraft={setDraft} busy={actionBusy} error={error} onClose={() => { if (!actionBusy) { setEditor(null); setError(""); } }} onSave={saveEditor} />
+          ) : (
+            <ResourceTable resourceKey={activeView} records={records} loading={loading} search={search} onSearch={setSearch} onEdit={openEditor} onDelete={deleteItem} onAdd={() => openEditor()} busy={actionBusy} />
+          )}
         </div>
       </main>
-      {editor && <Editor editor={editor} draft={draft} setDraft={setDraft} busy={actionBusy} error={error} onClose={() => { if (!actionBusy) { setEditor(null); setError(""); } }} onSave={saveEditor} />}
       {notice && <div className="admin-toast" role="status"><Icon name="check" size={17} />{notice}</div>}
     </div>
   );

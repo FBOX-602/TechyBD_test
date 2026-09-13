@@ -4521,6 +4521,22 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   margin-bottom: 2.25rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.featured-spotlight-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+.featured-spotlight-card:hover .spotlight-title {
+  color: #ff6200;
+}
+.featured-spotlight-card:hover .spotlight-cta-btn {
+  background: #ff6200;
+  color: #ffffff !important;
+  transform: translateY(-2px);
 }
 .spotlight-left-content {
   display: flex;
@@ -4684,10 +4700,16 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 .product-item-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+}
+.product-item-card:hover .card-project-title {
+  color: #ff6200;
 }
 .card-mockup-wrap {
   width: 100%;

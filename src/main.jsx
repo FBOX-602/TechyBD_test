@@ -470,9 +470,10 @@ function isVideoMedia(url) {
 function ProjectCard({ project, navigate }) {
   const shortName = project.title.split("—")[0]?.trim() || project.title;
   const categoryTitle = project.category || "eCommerce";
+  const detailsUrl = `/work/${project.slug || project.id}`;
 
   return (
-    <article className="product-item-card">
+    <LocalLink to={detailsUrl} navigate={navigate} className="product-item-card">
       <div className="card-mockup-wrap">
         <img src={project.image} alt={project.title} loading="lazy" className="card-mockup-img" />
       </div>
@@ -480,16 +481,11 @@ function ProjectCard({ project, navigate }) {
       <div className="card-body-content">
         <span className="card-category-label">{categoryTitle}</span>
         <h4 className="card-project-title">{shortName}</h4>
-        <a
-          href={project.href || `https://wa.me/8801581503522?text=Hi%20Techy%20BD%2C%20I%20am%20interested%20in%20${encodeURIComponent(project.title)}`}
-          target="_blank"
-          rel="noreferrer"
-          className="card-view-link"
-        >
+        <span className="card-view-link">
           View Project →
-        </a>
+        </span>
       </div>
-    </article>
+    </LocalLink>
   );
 }
 
@@ -578,7 +574,11 @@ function FeaturedWork({ full = false, navigate }) {
           <>
             {/* Featured Spotlight Showcase Card (#01 GreenMart eCommerce - Full Project Page only) */}
             {full && (activeCategory === "All" || activeCategory === "eCommerce") && spotlightProject && (
-              <div className="featured-spotlight-card">
+              <LocalLink
+                to={`/work/${spotlightProject.slug || spotlightProject.id}`}
+                navigate={navigate}
+                className="featured-spotlight-card"
+              >
                 <div className="spotlight-left-content">
                   <div className="spotlight-number-row">
                     <span className="spotlight-num">{spotlightProject.number || "01"}</span>
@@ -601,14 +601,9 @@ function FeaturedWork({ full = false, navigate }) {
                     ))}
                   </div>
 
-                  <a
-                    href={spotlightProject.href || `/contact`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="spotlight-cta-btn"
-                  >
+                  <span className="spotlight-cta-btn">
                     View Project →
-                  </a>
+                  </span>
                 </div>
 
                 <div className="spotlight-right-media">
@@ -617,7 +612,7 @@ function FeaturedWork({ full = false, navigate }) {
                       <span className="dot red" />
                       <span className="dot yellow" />
                       <span className="dot green" />
-                      <span className="browser-url-pill">GreenMart</span>
+                      <span className="browser-url-pill">{spotlightProject.title.split("—")[0]?.trim() || "GreenMart"}</span>
                     </div>
                     <img src={spotlightProject.image} alt={spotlightProject.title} className="desktop-screen-img" />
                   </div>
@@ -627,7 +622,7 @@ function FeaturedWork({ full = false, navigate }) {
                     </div>
                   )}
                 </div>
-              </div>
+              </LocalLink>
             )}
 
             {/* Project Cards Grid */}

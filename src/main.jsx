@@ -2078,10 +2078,13 @@ function ContactPage({ navigate }) {
   const submit = async (event) => {
     event.preventDefault();
     setErrorMsg("");
-    const formData = new FormData(event.currentTarget);
+    setSubmitted(false);
+    const formElement = event.currentTarget;
+    const formData = new FormData(formElement);
     const firstName = (formData.get("firstName") || "").trim();
     const lastName = (formData.get("lastName") || "").trim();
     const email = (formData.get("email") || "").trim();
+    const phone = contact.phone || "01581503522";
     const projectNotes = (formData.get("notes") || "").trim();
 
     if (!firstName || !lastName || !email || !projectNotes) {
@@ -2098,17 +2101,31 @@ function ContactPage({ navigate }) {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const message = `Hi Techy BD,\n\nI'd like to discuss a website project:\n• Name: ${firstName} ${lastName}\n• Email: ${email}\n• Project Details: ${projectNotes}`;
-      const userWaUrl = `https://wa.me/8801581503522?text=${encodeURIComponent(message)}`;
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          phone,
+          notes: projectNotes,
+          recipient: "fmdomar602@gmail.com",
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Could not send message. Please try again.");
+      }
 
       setSubmitted(true);
-      setIsSubmitting(false);
-      window.open(userWaUrl, "_blank", "noopener,noreferrer");
-      event.currentTarget.reset();
+      formElement.reset();
     } catch (err) {
+      setErrorMsg(err.message || "Failed to send message. Please try again or chat on WhatsApp.");
+    } finally {
       setIsSubmitting(false);
-      setErrorMsg("Something went wrong. Please try again or chat on WhatsApp.");
     }
   };
 
@@ -2282,7 +2299,7 @@ function ContactPage({ navigate }) {
               </div>
 
               {errorMsg && <p className="form-error-notice-same">{errorMsg}</p>}
-              {submitted && <p className="form-success-notice-same">✓ Message sent! Redirecting to WhatsApp...</p>}
+              {submitted && <p className="form-success-notice-same">✓ Message sent successfully! We will get back to you soon.</p>}
 
               {/* Row 4: Primary Form Button & WhatsApp Action Side-by-Side */}
               <div className="form-buttons-row-same">

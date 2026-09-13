@@ -33,6 +33,11 @@ function apiMiddlewarePlugin() {
             await handler(req, res);
             return;
           }
+          if (pathname === "/api/contact" && req.method === "POST") {
+            const { default: handler } = await import("./api/contact.js");
+            await handler(req, res);
+            return;
+          }
           if (pathname.startsWith("/api/admin/")) {
             const subPath = pathname.replace(/^\/api\/admin\//, "");
             const parts = subPath.split("/").filter(Boolean);

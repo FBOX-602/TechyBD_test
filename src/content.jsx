@@ -57,18 +57,18 @@ export const fallbackContent = Object.freeze({
 function mergeResourceCollection(localItems, serverItems, fallbackDefaults, prefix) {
   const map = new Map();
 
-  // 1. Add all server items from Supabase
-  if (Array.isArray(serverItems)) {
-    serverItems.forEach((item, index) => {
+  // 1. Seed with fallback defaults first so full default collection is always present
+  if (Array.isArray(fallbackDefaults)) {
+    fallbackDefaults.forEach((item, index) => {
       if (!item || item.published === false) return;
       const key = String(item.id || item.slug || item.title || `${prefix}-${index}`).toLowerCase().trim();
       map.set(key, { ...item, id: item.id || item.slug || `${prefix}-${index}` });
     });
   }
 
-  // 2. Overlay any local storage items
-  if (Array.isArray(localItems)) {
-    localItems.forEach((item, index) => {
+  // 2. Overlay server items from Supabase CMS
+  if (Array.isArray(serverItems) && serverItems.length > 0) {
+    serverItems.forEach((item, index) => {
       if (!item || item.published === false) return;
       const key = String(item.id || item.slug || item.title || `${prefix}-${index}`).toLowerCase().trim();
       const existing = map.get(key);
@@ -76,12 +76,13 @@ function mergeResourceCollection(localItems, serverItems, fallbackDefaults, pref
     });
   }
 
-  // 3. Fallback defaults if completely empty
-  if (map.size === 0 && Array.isArray(fallbackDefaults)) {
-    fallbackDefaults.forEach((item, index) => {
+  // 3. Overlay any local storage items
+  if (Array.isArray(localItems) && localItems.length > 0) {
+    localItems.forEach((item, index) => {
       if (!item || item.published === false) return;
       const key = String(item.id || item.slug || item.title || `${prefix}-${index}`).toLowerCase().trim();
-      map.set(key, { ...item, id: item.id || item.slug || `${prefix}-${index}` });
+      const existing = map.get(key);
+      map.set(key, existing ? { ...existing, ...item } : { ...item, id: item.id || item.slug || `${prefix}-${index}` });
     });
   }
 

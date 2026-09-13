@@ -5209,6 +5209,103 @@ h1:lang(bn), h2:lang(bn), h3:lang(bn) { line-height: 1.35; }
   box-shadow: 0 0 30px rgba(255, 98, 0, 0.6);
 }
 
+/* ==========================================================================
+   BRANDED CENTER SPINNER SYSTEM
+   ========================================================================== */
+.branded-center-loader-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4.5rem 1.5rem;
+  min-height: 260px;
+  width: 100%;
+  text-align: center;
+}
+
+.branded-spinner-container {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.branded-spinner-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3.5px solid rgba(255, 98, 0, 0.15);
+  border-top-color: #FF6200;
+  border-right-color: #FF8A1C;
+  animation: brandedSpinRing 0.85s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+  box-shadow: 0 0 18px rgba(255, 98, 0, 0.45);
+}
+
+@keyframes brandedSpinRing {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.branded-spinner-logo-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #0B1932;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+  animation: logoPulseGlow 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes logoPulseGlow {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 10px rgba(255, 98, 0, 0.2);
+  }
+  100% {
+    transform: scale(1.04);
+    box-shadow: 0 0 22px rgba(255, 98, 0, 0.65);
+  }
+}
+
+.spinner-logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.spinner-logo-text {
+  font-family: var(--font-heading, sans-serif);
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.branded-loader-label {
+  margin-top: 1.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  animation: textFadePulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes textFadePulse {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
 
 
 

@@ -93,6 +93,27 @@ function BrandedProgressLoader({ active }) {
   );
 }
 
+function BrandedCenterSpinner({ text = "Loading..." }) {
+  const { settings, assets } = useSiteContent();
+  const logoUrl = settings?.brand?.logoUrl || assets?.logo;
+
+  return (
+    <div className="branded-center-loader-wrap" aria-label="Loading content">
+      <div className="branded-spinner-container">
+        <div className="branded-spinner-orbit-ring" />
+        <div className="branded-spinner-logo-box">
+          {logoUrl ? (
+            <img src={logoUrl} alt="Techy BD Logo" className="spinner-logo-img" />
+          ) : (
+            <span className="spinner-logo-text">TB</span>
+          )}
+        </div>
+      </div>
+      {text && <span className="branded-loader-label">{text}</span>}
+    </div>
+  );
+}
+
 function SpotlightSkeleton() {
   return (
     <div className="featured-spotlight-card skeleton-card-wrap" aria-hidden="true">
@@ -505,7 +526,8 @@ function FeaturedWork({ full = false, navigate }) {
   const gridProjects = useMemo(() => {
     if (full) {
       if (activeCategory === "All" && spotlightProject) {
-        return filteredProjects.filter((p) => (p.id || p.slug) !== (spotlightProject.id || spotlightProject.slug));
+        const remaining = filteredProjects.filter((p) => (p.id || p.slug) !== (spotlightProject.id || spotlightProject.slug));
+        return remaining.length > 0 ? remaining : filteredProjects;
       }
       return filteredProjects;
     }
@@ -547,12 +569,9 @@ function FeaturedWork({ full = false, navigate }) {
           </div>
         )}
 
-        {/* Dynamic State Handling: Skeletons -> Error -> Content */}
+        {/* Dynamic State Handling: Branded Center Spinner -> Error -> Content */}
         {isLoading && projects.length === 0 ? (
-          <>
-            {full && <SpotlightSkeleton />}
-            <ProjectSkeletonGrid count={full ? 6 : 3} />
-          </>
+          <BrandedCenterSpinner text="Loading Projects..." />
         ) : error && projects.length === 0 ? (
           <BrandedErrorCard message={error} onRetry={reloadContent} />
         ) : (
@@ -913,12 +932,17 @@ function ServicesSection({ navigate, isHomePage = false }) {
           </div>
 
           {/* Carousel with Navigation Controls */}
-          <div className="services-carousel-wrapper">
-            <button onClick={scrollLeft} className="carousel-control-btn left" aria-label="Previous service">
-              <ChevronLeft size={20} />
-            </button>
+          {isLoading && (!services || services.length === 0) ? (
+            <BrandedCenterSpinner text="Loading Services..." />
+          ) : error && (!services || services.length === 0) ? (
+            <BrandedErrorCard message={error} onRetry={reloadContent} />
+          ) : (
+            <div className="services-carousel-wrapper">
+              <button onClick={scrollLeft} className="carousel-control-btn left" aria-label="Previous service">
+                <ChevronLeft size={20} />
+              </button>
 
-            <div className="services-carousel-track" ref={scrollRef}>
+              <div className="services-carousel-track" ref={scrollRef}>
               {displayServices.map((service, idx) => {
                 const color = service.color || (idx === 0 ? "blue" : idx === 1 ? "green" : idx === 2 ? "orange" : idx === 3 ? "purple" : "gold");
                 const numberStr = service.number || (idx + 1 < 10 ? `0${idx + 1}` : `${idx + 1}`);
@@ -957,6 +981,7 @@ function ServicesSection({ navigate, isHomePage = false }) {
               <ChevronRight size={20} />
             </button>
           </div>
+          )}
         </div>
       </section>
 
@@ -1370,13 +1395,8 @@ function CaseStudyPage({ slug, navigate }) {
 
   if (isLoading && !project) {
     return (
-      <div className="case-study-page">
-        <div className="container" style={{ padding: "4rem 1rem" }}>
-          <div className="skeleton-box" style={{ width: "120px", height: "1.5rem", marginBottom: "2rem" }} />
-          <div className="skeleton-box" style={{ width: "65%", height: "3rem", marginBottom: "1rem" }} />
-          <div className="skeleton-box" style={{ width: "85%", height: "1.2rem", marginBottom: "2.5rem" }} />
-          <div className="skeleton-box" style={{ width: "100%", height: "420px", borderRadius: "1.5rem" }} />
-        </div>
+      <div className="case-study-page" style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <BrandedCenterSpinner text="Loading Case Study..." />
       </div>
     );
   }
